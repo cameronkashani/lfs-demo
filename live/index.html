@@ -186,58 +186,33 @@ body{background:#050403;color:var(--t1);font-family:'IBM Plex Mono',monospace;
 .grass:after{content:"";position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(255,214,140,.13),transparent 55%)}
 
-/* ---------- THE BOARD ----------
-   It was two lines of mono floating over the grass, which is a caption, not a scoreboard.
-   Your app already owns the right language for this: the jumbotron draws to a tiny buffer
-   and blows it up with smoothing off, so the type breaks into real LED cells. The same
-   effect in DOM is a fine dark grid laid over the glyphs - the cells are the seams
-   between lit and unlit, not a texture printed on top.
-
-   The board carries the GAME. Your margin hangs underneath it in the accent, because the
-   score and your position are not the same kind of fact and sharing a line said they were. */
-.bug{position:absolute;left:0;right:0;top:0;z-index:3;
-  display:flex;flex-direction:column;align-items:center;padding:12px 16px 0}
-.rigline{position:relative;width:150px;height:14px}
-.rigline:before,.rigline:after{content:"";position:absolute;top:0;bottom:0;width:1px;
-  background:linear-gradient(180deg,rgba(163,154,137,.05),rgba(163,154,137,.4))}
-.rigline:before{left:26px;transform:skewX(9deg)}
-.rigline:after{right:26px;transform:skewX(-9deg)}
-.board{position:relative;padding:5px;background:#17130D;
-  border:1px solid rgba(163,154,137,.22);
-  box-shadow:0 10px 26px rgba(0,0,0,.7),0 0 44px rgba(255,150,70,.10)}
-/* four bolts, because a housing that hangs off a roof has to be bolted to something */
-.board i.b{position:absolute;width:3px;height:3px;border-radius:50%;
-  background:rgba(163,154,137,.5)}
-.board i.b1{left:3px;top:3px} .board i.b2{right:3px;top:3px}
-.board i.b3{left:3px;bottom:3px} .board i.b4{right:3px;bottom:3px}
-.screen{position:relative;background:#080805;padding:9px 18px 9px;min-width:224px;
-  overflow:hidden}
-/* THE CELLS. A 3px grid of dark seams over everything inside the screen, which is what
-   turns type into a board instead of type on a dark rectangle. */
-/* A GLYPH'S REAL SIZE IS IN CELLS, NOT PIXELS. At 3px cells a 25px number stood eight
-   cells tall and the seams ate it: it looked like a stadium board and behaved like one
-   seen from the car park. Jason's jumbotron sets its headline at about twenty one cells,
-   so: 2px cells, bigger numbers, and a lighter seam. */
-.screen:after{content:"";position:absolute;inset:0;pointer-events:none;z-index:2;
-  background:repeating-linear-gradient(90deg,rgba(0,0,0,.5) 0 1px,transparent 1px 2px),
-             repeating-linear-gradient(0deg,rgba(0,0,0,.5) 0 1px,transparent 1px 2px)}
-.scr1{display:flex;align-items:baseline;justify-content:center;gap:9px;
-  font-family:'Anton',sans-serif;font-weight:400;line-height:1}
-.scr1 .tm{font-size:11px;letter-spacing:.14em;color:#9C8F6C}
-.scr1 b{font-weight:400;font-size:34px;color:#F8EBC8;
-  text-shadow:0 0 11px rgba(255,196,90,.5)}
-.scr1 b.dim{color:#7A6E4E;text-shadow:none}
-.scr1 .gap{width:18px}
-.scr2{display:flex;align-items:center;gap:9px;margin-top:6px}
-.scr2 .clk{font-size:11px;letter-spacing:.2em;color:#9C8F6C;white-space:nowrap}
-.qs{flex:1;display:flex;gap:3px}
-.qs span{flex:1;height:4px;background:rgba(163,154,137,.16);overflow:hidden;
+/* ---------- THE BUG ----------
+   A hung housing with bolts and rigging was a literal reading of "scoreboard" and it did
+   the one thing the top of this frame cannot afford: it stood in front of the men. This
+   is flat and back where it was, and it reads as a board through TREATMENT rather than
+   through furniture - lit amber digits, the trailing side unlit, and a segmented rail
+   that fills as the game runs. No object, no box, nothing over the field. */
+.bug{position:absolute;left:0;right:0;top:0;z-index:3;padding:12px 16px 0}
+.bug .b1{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.scr{display:flex;align-items:baseline;gap:8px;font-family:'Anton',sans-serif;line-height:1}
+.scr .tm{font-size:11px;letter-spacing:.16em;color:#8C8064}
+.scr b{font-weight:400;font-size:30px;color:#F8EBC8;
+  text-shadow:0 0 10px rgba(255,196,90,.45)}
+/* whoever is behind is unlit, so the lead reads without arithmetic */
+.scr b.dim{color:#6E6549;text-shadow:none}
+.scr .gap{width:14px}
+/* your margin is about YOU, so it is the one thing up here wearing the accent */
+.marg{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--flare);
+  white-space:nowrap}
+.b2{display:flex;align-items:center;gap:10px;margin-top:9px}
+.b2 .clk{font-size:11px;letter-spacing:.2em;color:#8C8064;white-space:nowrap}
+/* THE PROGRESS IS A BOARD ELEMENT, so it gets board weight: four lit segments rather
+   than a hairline, filling as the quarter runs. */
+.qs{flex:1;display:flex;gap:4px}
+.qs span{flex:1;height:6px;background:rgba(255,214,140,.12);overflow:hidden;
   transform:skewX(-24deg)}
-.qs span i{display:block;height:100%;width:0;background:#C9A24A;transition:width .5s linear}
-/* your margin is about YOU, so it is the one thing here wearing the accent, and it hangs
-   off the board rather than living inside it */
-.marg{margin-top:8px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--flare)}
+.qs span i{display:block;height:100%;width:0;background:#D9AE52;
+  box-shadow:0 0 8px rgba(255,196,90,.5);transition:width .5s linear}
 
 .men{position:absolute;left:0;right:0;bottom:0;z-index:2;display:flex;align-items:flex-end;
   gap:12px;padding:0 16px 9px}
@@ -426,20 +401,16 @@ body{background:#050403;color:var(--t1);font-family:'IBM Plex Mono',monospace;
       <div class="bank" style="left:73%"><i></i><i></i><i></i><i></i><i></i></div>
     </div>
     <div class="bug">
-      <div class="rigline"></div>
-      <div class="board">
-        <i class="b b1"></i><i class="b b2"></i><i class="b b3"></i><i class="b b4"></i>
-        <div class="screen">
-          <div class="scr1">
-            <span class="tm">GB</span><b id="gbS">0</b>
-            <span class="gap"></span>
-            <span class="tm">KC</span><b id="kcS">0</b>
-          </div>
-          <div class="scr2"><span class="clk" id="clk">Q1 15:00</span>
-            <span class="qs" id="qs"></span></div>
-        </div>
+      <div class="b1">
+        <span class="scr">
+          <span class="tm">GB</span><b id="gbS">0</b>
+          <span class="gap"></span>
+          <span class="tm">KC</span><b id="kcS">0</b>
+        </span>
+        <span class="marg" id="state">Level</span>
       </div>
-      <span class="marg" id="state">Level</span>
+      <div class="b2"><span class="clk" id="clk">Q1 15:00</span>
+        <span class="qs" id="qs"></span></div>
     </div>
     <div class="men" id="men">
       <div class="man a" id="manA"><div class="guy" id="guyA"></div><span class="n" id="ya">0</span><i class="bar"><s id="ba"></s></i><span class="lb" id="lbA">Love</span></div>
