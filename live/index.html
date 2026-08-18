@@ -237,23 +237,37 @@ body{background:#0A0908;color:var(--bone);
 .play.turn .sc b{color:#0B0705}
 
 /* ---------- 1. ONE TAP ----------
-   Typing is expensive and most people never will. This is the cheapest possible way to be
-   in the room, and the counts are the room: they climb for about ten seconds after a play,
-   fast then slow, which is what a crowd reacting actually looks like. Tapping is a toggle,
-   because a reaction you cannot take back is a reaction people hesitate over. */
-.react{display:flex;gap:6px;margin-top:9px;padding-top:8px;
+   The first pass gave every play three emotions - GET IN, NO WAY, BRUTAL - and they were
+   generic feelings bolted onto a betting screen. A tap has to MEAN something here, and the
+   only thing worth saying in a room split two ways is which side you are shouting for.
+
+   So the tap is noise for your man. The other side's count sits beside it as a readout,
+   because you cannot cheer the man you faded and a button that lets you would be nonsense.
+   Whichever side is louder on the play gets full colour; the other dims. And because
+   nobody can change a pick after kickoff, the noise is the ONE crowd number that can
+   honestly move all night. */
+.noise{display:flex;align-items:stretch;gap:8px;margin-top:9px;padding-top:8px;
   border-top:1px solid rgba(237,228,207,.10)}
-.play.turn .react{border-top-color:rgba(11,7,5,.16)}
-.react button{flex:1;display:flex;align-items:baseline;justify-content:center;gap:6px;
-  font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.1em;
-  text-transform:uppercase;color:rgba(237,228,207,.5);background:transparent;
-  border:1px solid rgba(237,228,207,.16);padding:6px 4px;cursor:pointer;
-  transition:color .18s ease,border-color .18s ease,background .18s ease}
-.play.turn .react button{color:rgba(11,7,5,.55);border-color:rgba(11,7,5,.18)}
-.react button b{font-weight:400;font-size:10px;font-variant-numeric:tabular-nums;color:var(--bone)}
-.play.turn .react button b{color:#0B0705}
-.react button.on b{color:var(--ink)}
-.react button.on{color:var(--ink);background:var(--mypc);border-color:var(--mypc)}
+.play.turn .noise{border-top-color:rgba(11,7,5,.16)}
+.noise .k{flex-shrink:0;align-self:center;font-size:7px;letter-spacing:.24em;
+  text-transform:uppercase;color:rgba(237,228,207,.3)}
+.play.turn .noise .k{color:rgba(11,7,5,.4)}
+.noise .sides{flex:1;display:flex;gap:8px;justify-content:flex-end;align-items:center}
+.nb{display:flex;align-items:baseline;gap:6px;font-family:'IBM Plex Mono',monospace;
+  font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;
+  padding:6px 10px;border:1px solid transparent;background:transparent;
+  transition:opacity .3s ease,background .18s ease,border-color .18s ease}
+.nb b{font-weight:400;font-size:11px;font-variant-numeric:tabular-nums}
+.nb.quiet{opacity:.42}
+.nb.a{color:var(--pcA)} .nb.b{color:var(--pcB)}
+/* yours is a button; theirs is the room reported back to you. The two have to be
+   distinguishable at a glance or the readout reads as a control that ignores you. */
+button.nb{cursor:pointer;border-color:rgba(237,228,207,.32);
+  background:rgba(237,228,207,.05)}
+.play.turn button.nb{border-color:rgba(11,7,5,.3);background:rgba(11,7,5,.05)}
+button.nb.on{color:var(--ink);border-color:var(--mypc)}
+button.nb.on{background:var(--mypc)}
+button.nb.on b{color:var(--ink)}
 
 .cmt{flex-shrink:0;display:flex;gap:8px;align-items:baseline;padding-left:13px;
   animation:in .42s cubic-bezier(.2,1.25,.35,1) both}
@@ -290,10 +304,23 @@ body{background:#0A0908;color:var(--bone);
 .pres .d{margin-left:auto;color:var(--flare);opacity:0;transition:opacity .5s ease}
 .pres .d.show{opacity:1}
 
-.split{flex-shrink:0;display:flex;justify-content:space-between;
-  padding-top:8px;margin-top:8px;border-top:1px solid rgba(237,228,207,.14);
-  font-size:8px;letter-spacing:.16em}
-.split .a{color:var(--pcA)} .split .b{color:var(--pcB)}
+/* THE PICKS CANNOT MOVE AND THE NOISE CAN. Putting them one above the other is the whole
+   argument: the top row is what everybody committed to before kickoff and is now frozen,
+   the bottom row is the same room in real time. A bar that shifts under a number that
+   cannot is more interesting than either on its own. */
+.foot{flex-shrink:0;padding-top:8px;margin-top:8px;
+  border-top:1px solid rgba(237,228,207,.14);font-size:8px;letter-spacing:.16em}
+.foot .fr{display:flex;align-items:center;gap:10px;margin-top:7px}
+.foot .fr:first-child{margin-top:0}
+.foot .fk{flex-shrink:0;width:60px;text-transform:uppercase;color:rgba(237,228,207,.3);
+  font-size:7px;letter-spacing:.24em}
+.foot .picks{flex:1;display:flex;justify-content:space-between}
+.foot .a{color:var(--pcA)} .foot .b{color:var(--pcB)}
+.nbar{flex:1;display:flex;height:7px;gap:2px;transform:skewX(-24deg)}
+.nbar i{display:block;transition:width .7s cubic-bezier(.3,.9,.3,1)}
+.nbar .na{background:var(--pcA)} .nbar .nb2{background:var(--pcB)}
+.foot .nnum{flex-shrink:0;font-variant-numeric:tabular-nums;color:rgba(237,228,207,.55)}
+.foot .nnum b{font-weight:400}
 
 .say{flex-shrink:0;display:flex;align-items:center;gap:10px;margin-top:9px;
   padding:8px 9px 8px 11px;background:rgba(237,228,207,.08);
@@ -354,9 +381,16 @@ body{background:#0A0908;color:var(--bone);
       <span class="d" id="presD"></span>
     </div>
 
-    <div class="split">
-      <span class="a" id="splitA">LOVE 29%</span>
-      <span class="b" id="splitB">MAHOMES 71%</span>
+    <div class="foot">
+      <div class="fr">
+        <span class="fk">The picks</span>
+        <span class="picks"><span class="a" id="splitA">LOVE 29%</span><span class="b" id="splitB">MAHOMES 71%</span></span>
+      </div>
+      <div class="fr">
+        <span class="fk">The noise</span>
+        <span class="nbar"><i class="na" id="nbarA" style="width:50%"></i><i class="nb2" id="nbarB" style="width:50%"></i></span>
+        <span class="nnum" id="nnum"><b>50</b> / 50</span>
+      </div>
     </div>
 
     <form class="say" id="say" autocomplete="off">
@@ -439,52 +473,85 @@ function qAt(n){const c=GAME.clock[n];
   const m=c.match(/Q(\d) (\d+):(\d+)/);
   return{q:+m[1],p:clamp(1-((+m[2])+(+m[3])/60)/15,0,1)};}
 
-/* ---------- reactions ----------
-   The mix is not random noise, it reads the play: a score for your man is mostly LET'S GO,
-   a score against you is mostly BRUTAL, and NO WAY tracks how long the throw was. So the
-   shape of the crowd's reaction tells you what happened before you read the line. */
-const LABELS=['Get in','No way','Brutal'];
-function mix(n){
-  const L=GAME.line[n], mine=(L.w===SIDE[PICK].w);
-  const size=L.s==='td'?1:L.s==='fg'?.55:.3;
-  const yd=(L.t.match(/(\d+)\s*yard/)||[0,14])[1];
-  const spec=clamp(yd/36,.2,1);
-  const j=()=>.82+Math.random()*.36;
-  return [Math.round(1150*size*(mine?1.35:.32)*j()),
-          Math.round(1150*size*(.3+spec*.85)*j()),
-          Math.round(1150*size*(mine?.2:1.3)*j())];
+/* ---------- the noise ----------
+   How loud each side gets on a play. Two things drive it: how big the play was for that
+   man, and how many people are on his side. But the crowd size is taken to a fractional
+   power rather than used flat, because a small crowd is not a quiet one - twenty nine
+   percent who backed the underdog make more noise per head than the seventy one percent
+   who took the obvious side, and that is the most enjoyable thing about being in the
+   minority. The exponent was picked by running the whole night: the noise share starts at
+   17 for Love, crosses at the half, gets pulled back in the third, and Love's side takes
+   it for good in the fourth before Mahomes claws it to a knife edge at the whistle.
+   A constant readout would not have been worth putting on the screen. */
+const NOISE={a:0,b:0};
+function noiseFor(n){
+  const L=GAME.line[n];
+  const size=L.s==='td'?1:L.s==='fg'?.58:.34;
+  const yd=+((L.t.match(/(\d+)\s*yard/)||[0,14])[1]);
+  const spec=clamp(yd/34,.55,1.5);
+  const act=L.w, oth=act==='a'?'b':'a';
+  const wt=k=>Math.pow((k==='a'?SIDE.LOVE.share:SIDE.MAHOMES.share)/100,0.42);
+  const j=()=>.85+Math.random()*.3;
+  const o={};
+  o[act]=Math.round(4200*size*spec*wt(act)*j());
+  o[oth]=Math.round(4200*size*wt(oth)*0.16*j());
+  return o;
 }
 const climbing=[];
-function reactRow(n){
-  const target=mix(n), row=document.createElement('div');
-  row.className='react';
-  const state={target,shown:target.map(v=>Math.round(v*.18)),mine:[false,false,false],t0:performance.now(),els:[]};
-  LABELS.forEach((lab,k)=>{
-    const b=document.createElement('button');
-    b.type='button';
-    b.innerHTML='<span>'+lab+'</span><b>'+nf(state.shown[k])+'</b>';
-    b.onclick=()=>{ state.mine[k]=!state.mine[k];
-      b.classList.toggle('on',state.mine[k]);
-      state.target[k]+=state.mine[k]?1:-1;
-      state.shown[k]+=state.mine[k]?1:-1;
-      b.querySelector('b').textContent=nf(state.shown[k]);
-      bump(140); };
-    state.els.push(b); row.appendChild(b);
-  });
-  climbing.push(state);
+function noiseRow(n){
+  const target=noiseFor(n), mineSide=SIDE[PICK].w, theirs=mineSide==='a'?'b':'a';
+  const row=document.createElement('div');
+  row.className='noise';
+  row.innerHTML='<span class="k">The noise</span><span class="sides"></span>';
+  const hold=row.querySelector('.sides');
+  const mk=(side,isMine)=>{
+    const e=document.createElement(isMine?'button':'span');
+    if(isMine)e.type='button';
+    e.className='nb '+side;
+    e.innerHTML='<span>\u25B2 '+(side==='a'?'Love':'Mahomes')+'</span><b>0</b>';
+    return e;
+  };
+  // your man first: the thing you can do comes before the thing you can only watch
+  const mineEl=mk(mineSide,true), theirEl=mk(theirs,false);
+  hold.appendChild(mineEl); hold.appendChild(theirEl);
+  const st={target,shown:{a:0,b:0},mine:false,t0:performance.now(),
+            els:{[mineSide]:mineEl,[theirs]:theirEl},row};
+  st.shown[mineSide]=Math.round(target[mineSide]*.16);
+  st.shown[theirs]=Math.round(target[theirs]*.16);
+  mineEl.onclick=()=>{ st.mine=!st.mine;
+    mineEl.classList.toggle('on',st.mine);
+    st.target[mineSide]+=st.mine?1:-1; st.shown[mineSide]+=st.mine?1:-1;
+    NOISE[mineSide]+=st.mine?1:-1;
+    paint(st); noiseBar(); bump(90); };
+  climbing.push(st); paint(st);
+  NOISE.a+=target.a; NOISE.b+=target.b; noiseBar();
   return row;
+}
+function paint(st){
+  ['a','b'].forEach(k=>{
+    const e=st.els[k]; if(!e)return;
+    e.querySelector('b').textContent=nf(st.shown[k]);
+    e.classList.toggle('quiet',st.shown[k]<st.shown[k==='a'?'b':'a']);
+  });
+}
+function noiseBar(){
+  const t=NOISE.a+NOISE.b; if(!t)return;
+  const pa=Math.round(100*NOISE.a/t);
+  el('nbarA').style.width=pa+'%'; el('nbarB').style.width=(100-pa)+'%';
+  el('nnum').innerHTML=(PICK==='LOVE'?'<b>'+pa+'</b> / '+(100-pa):pa+' / <b>'+(100-pa)+'</b>');
 }
 /* fast then slow, over about ten seconds, then it settles and stays */
 setInterval(()=>{
   const now=performance.now();
   for(let x=climbing.length-1;x>=0;x--){
-    const s=climbing[x], p=clamp((now-s.t0)/10000,0,1), e=1-Math.pow(1-p,2.4);
+    const st=climbing[x], pr=clamp((now-st.t0)/10000,0,1), e=1-Math.pow(1-pr,2.4);
     let live=false;
-    s.target.forEach((t,k)=>{
-      const v=Math.round(t*(.18+.82*e))+(s.mine[k]?1:0);
-      if(v!==s.shown[k]){s.shown[k]=v;s.els[k].querySelector('b').textContent=nf(v);live=true;}
+    ['a','b'].forEach(k=>{
+      const v=Math.round(st.target[k]*(.16+.84*e))+(st.mine&&k===SIDE[PICK].w?1:0);
+      if(v!==st.shown[k]){st.shown[k]=v;live=true;}
     });
-    if(p>=1&&!live)climbing.splice(x,1);
+    if(live)paint(st);
+    if(pr>=1&&!live)climbing.splice(x,1);
   }
 },180);
 
@@ -565,7 +632,7 @@ function step(){
               (flag?'<span class="flag">'+flag+'</span>':'')+'</div>'+
               '<span class="txt">'+(turned?'\u25B2 ':'')+L.t+'</span>'+
               (L.s?'<span class="sc">'+scline(i)+'</span>':'');
-  d.appendChild(reactRow(i));
+  d.appendChild(noiseRow(i));
   add(d);
 
   // a score moves the room, and a lead change moves it more
@@ -586,8 +653,10 @@ function scline(n){const g=GAME.gb[n],k=GAME.kc[n];
 
 function run(){
   clearInterval(timer); timer=null;
-  i=-1; on50=null; seen=[]; climbing.length=0; pres=8200;
+  i=-1; on50=null; seen=[]; climbing.length=0; pres=8200; NOISE.a=0; NOISE.b=0;
   el('feed').innerHTML='';
+  el('nbarA').style.width='50%'; el('nbarB').style.width='50%';
+  el('nnum').innerHTML='<b>50</b> / 50';
   el('qs').innerHTML='<span><i></i></span>'.repeat(4);
   el('presN').textContent=nf(pres); el('presD').classList.remove('show');
   el('stakes').classList.remove('risk');
