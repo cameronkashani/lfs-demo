@@ -397,12 +397,16 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;image-rend
    score and the clock BELOW the two men, which is backwards for a score bug and cost the
    feed two rows it wanted back. It hangs off the top chrome now, above the players, the
    way it does in the study. */
-.lvbug{position:absolute;left:0;right:0;top:calc(var(--ins) + 58px * var(--g));z-index:7;
+/* 44, not 58. At 58 the rail landed in the lamp rig and the block sat nineteen pixels off
+   the top of their helmets, which reads as crowding rather than as a bug hung above the
+   play. It tucks under the top chrome instead, and the two rows are pulled a little
+   tighter so the whole thing takes less air. */
+.lvbug{position:absolute;left:0;right:0;top:calc(var(--ins) + 44px * var(--g));z-index:7;
   padding:0 calc(18px * var(--g));font-family:'IBM Plex Mono',monospace;
   opacity:0;pointer-events:none;transition:opacity .45s ease}
 .lvbug.on{opacity:1}
 .lvrow{display:flex;justify-content:space-between;align-items:center;
-  margin-top:calc(8px * var(--g))}
+  margin-top:calc(6px * var(--g))}
 .lvrow:first-child{margin-top:0}
 .lvscore{display:flex;align-items:baseline;gap:calc(7px * var(--g));
   font-family:'Anton',sans-serif;line-height:1}
