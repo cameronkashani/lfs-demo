@@ -510,23 +510,32 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;image-rend
    bottom because that is where a thumb already is, and it wears the same dot the room
    wears - in YOUR man's colour - so your line lands in the feed looking like one of
    theirs rather than like a system message about you. */
-.lvsay{display:flex;align-items:center;gap:calc(9px * var(--g));flex-shrink:0;
-  margin-top:calc(8px * var(--g));padding-top:calc(8px * var(--g));
-  border-top:1px solid rgba(237,228,207,.14)}
-.lvsay-dot{flex-shrink:0;width:calc(6px * var(--g));height:calc(6px * var(--g));
+/* It has to look like a CONTROL, not like another line of the feed. A bare row with a
+   rule over it disappeared into a panel that is already full of rows: it was there and
+   nobody could find it. So it gets a surface of its own, the cut corner every other
+   panel here has, and your man's colour down the edge - the same edge the card wears,
+   because these are the two things on this screen that belong to you rather than to the
+   game. The button fills solid the moment there is something to send, which is the one
+   piece of pure affordance in the product and worth the flare. */
+.lvsay{display:flex;align-items:center;gap:calc(10px * var(--g));flex-shrink:0;
+  margin-top:calc(9px * var(--g));
+  padding:calc(8px * var(--g)) calc(9px * var(--g)) calc(8px * var(--g)) calc(11px * var(--g));
+  background:rgba(237,228,207,.08);
+  border-left:calc(3px * var(--g)) solid var(--mypc,#D9B44A);
+  clip-path:polygon(0 0,100% 0,calc(100% - 8px * var(--g)) 100%,0 100%)}
+.lvsay-dot{flex-shrink:0;width:calc(7px * var(--g));height:calc(7px * var(--g));
   border-radius:50%;background:var(--mypc,#D9B44A)}
 .lvsay input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:#EDE4CF;
   font-family:'Barlow Condensed',sans-serif;font-weight:600;
-  font-size:calc(15px * var(--g));line-height:1.2;padding:calc(3px * var(--g)) 0}
-.lvsay input::placeholder{color:rgba(237,228,207,.32);font-weight:600}
+  font-size:calc(16px * var(--g));line-height:1.2;padding:calc(4px * var(--g)) 0}
+.lvsay input::placeholder{color:rgba(237,228,207,.5);font-weight:600}
 .lvsay button{flex-shrink:0;font-family:'IBM Plex Mono',monospace;
-  font-size:calc(8.5px * var(--u));letter-spacing:.22em;text-transform:uppercase;
-  color:rgba(237,228,207,.4);background:transparent;
-  border:1px solid rgba(237,228,207,.18);border-left-width:calc(2px * var(--g));
-  padding:calc(7px * var(--u)) calc(11px * var(--u));cursor:pointer;
-  transition:color .2s ease,border-color .2s ease}
-/* it only lights up when there is something to send */
-.lvsay.armed button{color:var(--flare);border-color:rgba(255,90,30,.7)}
+  font-size:calc(9px * var(--u));letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(237,228,207,.55);background:transparent;
+  border:1px solid rgba(237,228,207,.28);
+  padding:calc(8px * var(--u)) calc(13px * var(--u));cursor:pointer;
+  transition:color .18s ease,border-color .18s ease,background .18s ease}
+.lvsay.armed button{color:#0B0705;background:var(--flare);border-color:var(--flare)}
 .lvcom.me .who{color:#EDE4CF}
 
 @keyframes lvin{from{opacity:0;transform:translateY(calc(9px * var(--g)))}
@@ -679,7 +688,13 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;image-rend
 .flight{position:absolute;left:0;right:0;top:-120%;height:130%;z-index:4;pointer-events:none;
   mix-blend-mode:soft-light;will-change:transform,opacity;
   background:linear-gradient(183deg,transparent 30%,rgba(255,214,150,.9) 46%,rgba(255,190,120,.5) 55%,transparent 72%)}
-.file.avail{opacity:1}
+/* AN INVISIBLE PAGE WAS STILL CATCHING THUMBS. The file parks at opacity 0 with its
+   pointer events left on, so its tab sat over the bottom of the frame on every beat,
+   hit-testable, ready to be dragged up out of nothing. Nobody noticed while the bottom
+   of the frame was empty; the composer landed underneath it and could not be tapped.
+   Visibility and interactivity are the same fact here, so they are toggled together. */
+.file{pointer-events:none}
+.file.avail{opacity:1;pointer-events:auto}
 .file:before{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;opacity:.20;
   mix-blend-mode:multiply;background-image:radial-gradient(rgba(60,40,16,.85) 30%,transparent 31%);background-size:3px 3px}
 .file:after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;opacity:.30;mix-blend-mode:multiply;
@@ -3983,7 +3998,7 @@ function fileApply(){
   // the sheet is only ever on screen because someone asked for it, so the tab has one job
   el('filepull').innerHTML='<i class="ar">↑</i> Close';
 }
-function fileGrab(y,src){ fileMeasure();
+function fileGrab(y,src){ if(typeof LIVE!=='undefined'&&LIVE.on)return; fileMeasure();
   F.drag=true;F.src=src;F.gy=y;F.gp=F.pos;F.vel=0;F.ly=y;F.lt=performance.now();F.moved=0;F.force=false; }
 function fileDragTo(y){ if(!F.drag)return;
   const now=performance.now();
