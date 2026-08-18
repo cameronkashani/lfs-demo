@@ -202,9 +202,9 @@ body{background:#0A0908;color:var(--bone);
   clip-path:polygon(0 0,100% 0,calc(100% - 4px) 100%,0 100%)}
 .stakes.risk .st-l .tag{background:var(--risk)}
 .st-m{width:1px;background:rgba(237,228,207,.14);flex-shrink:0}
-.st-r{flex-shrink:0;text-align:right}
+.st-r{flex-shrink:0;text-align:right;align-self:center}
 .st-r b{display:block;font-family:'Anton',sans-serif;font-weight:400;font-size:22px;
-  line-height:1.1;margin:5px 0 4px;color:var(--mypc)}
+  line-height:1.1;margin:0 0 4px;color:var(--mypc)}
 .st-r em{font-style:normal;display:block;font-size:8px;letter-spacing:.18em;
   text-transform:uppercase;color:var(--flare)}
 .stakes.risk .st-r em{color:var(--risk)}
@@ -216,7 +216,7 @@ body{background:#0A0908;color:var(--bone);
   mask-image:linear-gradient(180deg,transparent 0,#000 16px)}
 .feed::-webkit-scrollbar{display:none}
 
-.play{flex-shrink:0;background:rgba(237,228,207,.065);color:var(--bone);
+.play{flex-shrink:0;background:rgba(237,228,207,.055);color:var(--bone);
   border-left:3px solid var(--flare);
   clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%);
   padding:8px 13px 8px;box-shadow:2px 2px 0 rgba(0,0,0,.55);
@@ -242,18 +242,19 @@ body{background:#0A0908;color:var(--bone);
    answer was the obvious thing: emoji with counts. It needs no explaining, it costs one
    thumb, and everybody already knows how it works.
 
-   The counts are the interesting part. They are seeded from BOTH sides of the room, so a
-   Love touchdown lights the fire for the twenty nine percent and the skull for the seventy
-   one at the same time. The mix under a play is the split reacting, which is a thing you
-   cannot get from a single number. */
-.rx{display:flex;gap:5px;margin-top:9px;padding-top:8px;
-  border-top:1px solid rgba(237,228,207,.10)}
-.play.turn .rx{border-top-color:rgba(11,7,5,.16)}
-.rx button{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;
+   The counts are the interesting part. They are seeded from BOTH sides of the room: the
+   fire belongs to whoever the play just helped and the shrug to whoever it just hurt, so
+   the pair under a play is the split reacting and the bigger number tells you who is happy
+   without spending a word on it. */
+/* Two full width bars under every line put a lot of grey weight into a feed that is
+   supposed to read as text. Compact chips, hung on the right, do the same job and let the
+   slab stay a sentence with something small attached to it. */
+.rx{display:flex;gap:6px;margin-top:8px;justify-content:flex-end}
+.rx button{flex:0 0 auto;min-width:60px;display:flex;align-items:center;justify-content:center;gap:6px;
   background:rgba(237,228,207,.05);border:1px solid rgba(237,228,207,.16);
-  padding:5px 2px 6px;cursor:pointer;line-height:1;
+  padding:4px 9px 5px;cursor:pointer;line-height:1;
   transition:background .16s ease,border-color .16s ease,transform .12s ease}
-.play.turn .rx button{background:rgba(11,7,5,.05);border-color:rgba(11,7,5,.18)}
+.play.turn .rx button{background:rgba(11,7,5,.06);border-color:rgba(11,7,5,.2)}
 .rx .e{font-size:15px;line-height:1;
   font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif}
 .rx b{font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:9.5px;
@@ -307,24 +308,6 @@ body{background:#0A0908;color:var(--bone);
 .pres .d{margin-left:auto;color:var(--flare);opacity:0;transition:opacity .5s ease}
 .pres .d.show{opacity:1}
 
-/* THE PICKS CANNOT MOVE AND THE NOISE CAN. Putting them one above the other is the whole
-   argument: the top row is what everybody committed to before kickoff and is now frozen,
-   the bottom row is the same room in real time. A bar that shifts under a number that
-   cannot is more interesting than either on its own. */
-.foot{flex-shrink:0;padding-top:8px;margin-top:8px;
-  border-top:1px solid rgba(237,228,207,.14);font-size:8px;letter-spacing:.16em}
-.foot .fr{display:flex;align-items:center;gap:10px;margin-top:7px}
-.foot .fr:first-child{margin-top:0}
-.foot .fk{flex-shrink:0;width:60px;text-transform:uppercase;color:rgba(237,228,207,.3);
-  font-size:7px;letter-spacing:.24em}
-.foot .picks{flex:1;display:flex;justify-content:space-between}
-.foot .a{color:var(--pcA)} .foot .b{color:var(--pcB)}
-.nbar{flex:1;display:flex;height:7px;gap:2px;transform:skewX(-24deg)}
-.nbar i{display:block;transition:width .7s cubic-bezier(.3,.9,.3,1)}
-.nbar .na{background:var(--pcA)} .nbar .nb2{background:var(--pcB)}
-.foot .nnum{flex-shrink:0;font-variant-numeric:tabular-nums;color:rgba(237,228,207,.55)}
-.foot .nnum b{font-weight:400}
-
 .say{flex-shrink:0;display:flex;align-items:center;gap:10px;margin-top:9px;
   padding:8px 9px 8px 11px;background:rgba(237,228,207,.08);
   border-left:3px solid var(--mypc);
@@ -370,7 +353,6 @@ body{background:#0A0908;color:var(--bone);
       </div>
       <div class="st-m"></div>
       <div class="st-r">
-        <i>Your card</i>
         <b id="stTier">RARE</b>
         <em id="stPct">50% to mint</em>
       </div>
@@ -382,17 +364,6 @@ body{background:#0A0908;color:var(--bone);
       <span class="blip" id="presBlip"></span>
       <b id="presN">8,200</b><span>here now</span>
       <span class="d" id="presD"></span>
-    </div>
-
-    <div class="foot">
-      <div class="fr">
-        <span class="fk">The picks</span>
-        <span class="picks"><span class="a" id="splitA">LOVE 29%</span><span class="b" id="splitB">MAHOMES 71%</span></span>
-      </div>
-      <div class="fr">
-        <span class="fk">Tonight</span>
-        <span class="tally" id="tally"></span>
-      </div>
     </div>
 
     <form class="say" id="say" autocomplete="off">
@@ -477,28 +448,23 @@ function qAt(n){const c=GAME.clock[n];
   return{q:+m[1],p:clamp(1-((+m[2])+(+m[3])/60)/15,0,1)};}
 
 /* ---------- reactions ----------
-   Five, in surrogate escapes rather than literal characters so the file stays pure ASCII
+   Two, in surrogate escapes rather than literal characters so the file stays pure ASCII
    and cannot be mangled by whatever charset the page is served under. That has already
    bitten once here: an apostrophe came back as three characters.
      fire   he is cooking
      smug   not worried
-     sweat  starting to feel it
-     skull  that is the game
-     pray   nothing left but hope                                                        */
+   There were five for a pass and five was four too many. The pair is enough because it is
+   not a mood board, it is the two sides of the room answering each other. */
 const RX=[
-  {k:'fire', e:'\uD83D\uDD25'},
-  {k:'smug', e:'\uD83D\uDE24'},
-  {k:'sweat',e:'\uD83D\uDE30'},
-  {k:'skull',e:'\uD83D\uDC80'},
-  {k:'pray', e:'\uD83D\uDE4F'},
+  {k:'fire', e:'\uD83D\uDD25'},   // he is cooking
+  {k:'smug', e:'\uD83D\uDE24'},   // not worried
 ];
-const TALLY={fire:0,smug:0,sweat:0,skull:0,pray:0};
+const TALLY={fire:0,smug:0};
 const climbing=[];
 
-/* Both sides react to every play. Whoever the play helped brings the fire and the shrug;
-   whoever it hurt brings the skull, the sweat and the prayer. The side counts are taken to
-   a fractional power because a small crowd is not a quiet one: twenty nine percent who
-   backed the underdog react harder per head than the seventy one who took the chalk. */
+/* Both sides react to every play. The side counts are taken to a fractional power because
+   a small crowd is not a quiet one: twenty nine percent who backed the underdog react
+   harder per head than the seventy one who took the chalk. */
 function seedRx(n){
   const L=GAME.line[n];
   const size=L.s==='td'?1:L.s==='fg'?.58:.34;
@@ -507,21 +473,11 @@ function seedRx(n){
   const up=L.w==='a'?SIDE.LOVE.share:SIDE.MAHOMES.share;
   const dn=100-up;
   const w=x=>Math.pow(x/100,.42);
-  /* DESPAIR IS NOT PER PLAY, IT IS POSITIONAL. Weighting the skull purely by crowd size
-     made it beat the fire on your own touchdown, because the side that just lost ground is
-     the bigger one. That reads awfully and it is also wrong: one score does not bury a man
-     who is still ahead. So the negative set scales with how much trouble the hurt side is
-     actually in, taken off the same odds the card uses. Early, when Love backers are at
-     twenty percent, a Mahomes score brings the skull out. Late, with Love in front, the
-     same score barely raises a sweat. */
   const hurt=L.w==='a'?'b':'a';
   const trouble=clamp(1-oddsSide(hurt,n)/55,0,1);
   const base=2600*size*spec, j=()=>.85+Math.random()*.3;
-  return {fire :Math.round(base*w(up)*1.25*j()),
-          smug :Math.round(base*w(up)*0.50*j()),
-          sweat:Math.round(base*w(dn)*(0.30+0.55*trouble)*j()),
-          skull:Math.round(base*w(dn)*(0.25+0.90*trouble)*j()),
-          pray :Math.round(base*w(dn)*(0.15+0.45*trouble)*j())};
+  return {fire:Math.round(base*w(up)*1.25*j()),
+          smug:Math.round(base*w(dn)*(0.45+0.75*trouble)*j())};
 }
 function rxRow(n){
   const target=seedRx(n), row=document.createElement('div');
@@ -561,11 +517,7 @@ setInterval(()=>{
     if(pr>=1&&!live)climbing.splice(x,1);
   }
 },180);
-function tally(){
-  const top=RX.slice().sort((a,b)=>TALLY[b.k]-TALLY[a.k]).slice(0,3);
-  el('tally').innerHTML=top.map(r=>
-    '<span><i class="e">'+r.e+'</i><b>'+nf(TALLY[r.k])+'</b></span>').join('');
-}
+function tally(){}   // the night's running tally was one readout too many
 
 /* ---------- presence ---------- */
 function bump(n){ pres+=n;
@@ -593,8 +545,6 @@ function setSide(p){
   el('manA').classList.toggle('mine',p==='LOVE');
   el('manB').classList.toggle('mine',p==='MAHOMES');
   el('stTier').textContent=S.tier;
-  el('splitA').textContent='LOVE 29%'+(p==='LOVE'?' \u00B7 YOU':'');
-  el('splitB').textContent='MAHOMES 71%'+(p==='MAHOMES'?' \u00B7 YOU':'');
 }
 
 function head(n){
@@ -643,7 +593,7 @@ function step(){
   d.innerHTML='<div class="stamp"><span>'+GAME.clock[i]+'</span>'+
               (flag?'<span class="flag">'+flag+'</span>':'')+'</div>'+
               '<span class="txt">'+(turned?'\u25B2 ':'')+L.t+'</span>'+
-              (L.s?'<span class="sc">'+scline(i)+'</span>':'');
+              '';
   d.appendChild(rxRow(i));
   add(d);
 
@@ -660,8 +610,6 @@ function step(){
 
   head(i);
 }
-function scline(n){const g=GAME.gb[n],k=GAME.kc[n];
-  return (g>=k?'<b>GB '+g+'</b>':'GB '+g)+' \u00B7 '+(k>=g?'<b>KC '+k+'</b>':'KC '+k);}
 
 function run(){
   clearInterval(timer); timer=null;
