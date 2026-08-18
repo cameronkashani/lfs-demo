@@ -186,19 +186,58 @@ body{background:#050403;color:var(--t1);font-family:'IBM Plex Mono',monospace;
 .grass:after{content:"";position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(255,214,140,.13),transparent 55%)}
 
-.bug{position:absolute;left:0;right:0;top:0;z-index:3;padding:12px 16px 0}
-.bug .b1{display:flex;justify-content:space-between;align-items:baseline}
-.bug .sc{font-size:13px;letter-spacing:.06em;color:var(--t2)}
-.bug .sc b{font-weight:400;font-size:10px;letter-spacing:.16em;color:var(--t3)}
-.bug .sc .up{color:var(--t1)}
-.bug .clk{font-size:10px;letter-spacing:.18em;color:var(--t3)}
-/* your margin is about YOU, so it is the one thing on the field wearing the accent.
-   It sits opposite the score, the shape every broadcast bug already uses. */
-.marg{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--flare)}
-.bug .b2{display:flex;justify-content:flex-end;margin-top:2px}
-.qs{display:flex;gap:3px;margin-top:8px}
-.qs span{flex:1;height:3px;background:rgba(0,0,0,.5);overflow:hidden;transform:skewX(-24deg)}
-.qs span i{display:block;height:100%;width:0;background:var(--t2);transition:width .5s linear}
+/* ---------- THE BOARD ----------
+   It was two lines of mono floating over the grass, which is a caption, not a scoreboard.
+   Your app already owns the right language for this: the jumbotron draws to a tiny buffer
+   and blows it up with smoothing off, so the type breaks into real LED cells. The same
+   effect in DOM is a fine dark grid laid over the glyphs - the cells are the seams
+   between lit and unlit, not a texture printed on top.
+
+   The board carries the GAME. Your margin hangs underneath it in the accent, because the
+   score and your position are not the same kind of fact and sharing a line said they were. */
+.bug{position:absolute;left:0;right:0;top:0;z-index:3;
+  display:flex;flex-direction:column;align-items:center;padding:12px 16px 0}
+.rigline{position:relative;width:150px;height:14px}
+.rigline:before,.rigline:after{content:"";position:absolute;top:0;bottom:0;width:1px;
+  background:linear-gradient(180deg,rgba(163,154,137,.05),rgba(163,154,137,.4))}
+.rigline:before{left:26px;transform:skewX(9deg)}
+.rigline:after{right:26px;transform:skewX(-9deg)}
+.board{position:relative;padding:5px;background:#17130D;
+  border:1px solid rgba(163,154,137,.22);
+  box-shadow:0 10px 26px rgba(0,0,0,.7),0 0 44px rgba(255,150,70,.10)}
+/* four bolts, because a housing that hangs off a roof has to be bolted to something */
+.board i.b{position:absolute;width:3px;height:3px;border-radius:50%;
+  background:rgba(163,154,137,.5)}
+.board i.b1{left:3px;top:3px} .board i.b2{right:3px;top:3px}
+.board i.b3{left:3px;bottom:3px} .board i.b4{right:3px;bottom:3px}
+.screen{position:relative;background:#080805;padding:9px 18px 9px;min-width:224px;
+  overflow:hidden}
+/* THE CELLS. A 3px grid of dark seams over everything inside the screen, which is what
+   turns type into a board instead of type on a dark rectangle. */
+/* A GLYPH'S REAL SIZE IS IN CELLS, NOT PIXELS. At 3px cells a 25px number stood eight
+   cells tall and the seams ate it: it looked like a stadium board and behaved like one
+   seen from the car park. Jason's jumbotron sets its headline at about twenty one cells,
+   so: 2px cells, bigger numbers, and a lighter seam. */
+.screen:after{content:"";position:absolute;inset:0;pointer-events:none;z-index:2;
+  background:repeating-linear-gradient(90deg,rgba(0,0,0,.5) 0 1px,transparent 1px 2px),
+             repeating-linear-gradient(0deg,rgba(0,0,0,.5) 0 1px,transparent 1px 2px)}
+.scr1{display:flex;align-items:baseline;justify-content:center;gap:9px;
+  font-family:'Anton',sans-serif;font-weight:400;line-height:1}
+.scr1 .tm{font-size:11px;letter-spacing:.14em;color:#9C8F6C}
+.scr1 b{font-weight:400;font-size:34px;color:#F8EBC8;
+  text-shadow:0 0 11px rgba(255,196,90,.5)}
+.scr1 b.dim{color:#7A6E4E;text-shadow:none}
+.scr1 .gap{width:18px}
+.scr2{display:flex;align-items:center;gap:9px;margin-top:6px}
+.scr2 .clk{font-size:11px;letter-spacing:.2em;color:#9C8F6C;white-space:nowrap}
+.qs{flex:1;display:flex;gap:3px}
+.qs span{flex:1;height:4px;background:rgba(163,154,137,.16);overflow:hidden;
+  transform:skewX(-24deg)}
+.qs span i{display:block;height:100%;width:0;background:#C9A24A;transition:width .5s linear}
+/* your margin is about YOU, so it is the one thing here wearing the accent, and it hangs
+   off the board rather than living inside it */
+.marg{margin-top:8px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--flare)}
 
 .men{position:absolute;left:0;right:0;bottom:0;z-index:2;display:flex;align-items:flex-end;
   gap:12px;padding:0 16px 9px}
@@ -387,10 +426,20 @@ body{background:#050403;color:var(--t1);font-family:'IBM Plex Mono',monospace;
       <div class="bank" style="left:73%"><i></i><i></i><i></i><i></i><i></i></div>
     </div>
     <div class="bug">
-      <div class="b1"><span class="sc" id="score"></span>
-        <span class="marg" id="state">Level</span></div>
-      <div class="b2"><span class="clk" id="clk">Q1 15:00</span></div>
-      <div class="qs" id="qs"></div>
+      <div class="rigline"></div>
+      <div class="board">
+        <i class="b b1"></i><i class="b b2"></i><i class="b b3"></i><i class="b b4"></i>
+        <div class="screen">
+          <div class="scr1">
+            <span class="tm">GB</span><b id="gbS">0</b>
+            <span class="gap"></span>
+            <span class="tm">KC</span><b id="kcS">0</b>
+          </div>
+          <div class="scr2"><span class="clk" id="clk">Q1 15:00</span>
+            <span class="qs" id="qs"></span></div>
+        </div>
+      </div>
+      <span class="marg" id="state">Level</span>
     </div>
     <div class="men" id="men">
       <div class="man a" id="manA"><div class="guy" id="guyA"></div><span class="n" id="ya">0</span><i class="bar"><s id="ba"></s></i><span class="lb" id="lbA">Love</span></div>
@@ -665,8 +714,8 @@ function setSide(p){
 
 function head(n){
   const g=GAME.gb[n],k=GAME.kc[n];
-  el('score').innerHTML='<b>GB</b> <span class="'+(g>=k?'up':'')+'">'+g+'</span>'+
-    '&nbsp;&nbsp;<b>KC</b> <span class="'+(k>=g?'up':'')+'">'+k+'</span>';
+  el('gbS').textContent=g; el('kcS').textContent=k;
+  el('gbS').className=g>=k?'':'dim'; el('kcS').className=k>=g?'':'dim';
   el('clk').textContent=GAME.clock[n];
   const w=qAt(n);
   [...el('qs').children].forEach((sp,x)=>{
