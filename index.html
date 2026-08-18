@@ -3116,7 +3116,7 @@ function drawStamp(){
      which is long enough to register that something orange happened and not long enough to
      read your own man's name on it. The hold is more than doubled and the exit is later. */
   if(S.stamped||!(S.phase==='swoop'||S.phase==='done')||!S.pick||S.swoop>=.90)return;
-  const hold=.62, prog=S.swoop;
+  const hold=.10, prog=S.swoop;
   const off=prog<hold?0:easeOut((prog-hold)/(.90-hold))*H*1.35;
   ctx.save();ctx.translate(0,-off);
   ctx.fillStyle='#FF5A1E';ctx.fillRect(0,-H*.5,W,H*1.5);
@@ -3155,7 +3155,8 @@ const S={t:0,target:0,vel:0,drag:false,sx:0,st:0,phase:'play',swoop:0,pick:null,
          pickHot:null,pickMag:0,pickIn:0,   // pickIn 0..1, the pick slabs arriving on the frame
          pickDir:null,pickSm:0,pickZone:0,  // live pull direction, smoothed signed pull, sfx zone
          thr:0,thrB:0,lastFrame:0,        // thr/thrB = the windup frame actually on screen, per QB
-         swoopDir:1,stamped:false};       // the crane runs UP to the board and, before kickoff, back DOWN
+         swoopDir:1,stamped:false,        // the crane runs UP to the board and, before kickoff, back DOWN
+         holdT:0};                        // and it WAITS this long before it starts climbing
 
 /* ---------- THE GAME ITSELF ----------
    The pick used to cut straight from the commit stamp to the board. That skipped the
@@ -3469,6 +3470,7 @@ function commit(c){if(S.phase!=='picking')return;
   // next two minutes mean anything: 29% of the room is a different thing to watch than
   // 71% is. runStakes fires immediately because the crane is already climbing.
   SWOOP_FROM=camS.v?{...camS.v}:null;
+  S.holdT=performance.now()+2900;   // the pick is in, and it stays in
   runStakes();}
 
 /* ---------- what the crowd says, before kickoff ----------
@@ -3490,13 +3492,13 @@ function runStakes(){
      less than a second before the crane dropped, which is not long enough to read four
      numbers, let alone think about them. The numbers also count more slowly now: a
      number you can watch arrive is worth more than one that snaps. */
-  setTimeout(()=>{sfxJumbo(0);countTo('crowd',CROWD_M,1700);},2900);
-  setTimeout(()=>{sfxJumbo(1);countTo('surv',54,1700);},4900);
-  setTimeout(()=>{sfxJumbo(2);countTo('rare',1,500);},6500);
+  setTimeout(()=>{sfxJumbo(0);countTo('crowd',CROWD_M,1700);},5300);
+  setTimeout(()=>{sfxJumbo(1);countTo('surv',54,1700);},9700);
+  setTimeout(()=>{sfxJumbo(2);countTo('rare',1,500);},8900);
   setTimeout(()=>{sfxJumbo(3);countTo('streak',11,1200);},7300);
   // spend the stamp and drop the crane. The frame handler enters the game the moment
   // the camera is back on the men, so the kickoff is the landing rather than a cut.
-  setTimeout(()=>{S.stamped=true;S.swoopDir=-1;},10600);
+  setTimeout(()=>{S.stamped=true;S.swoopDir=-1;},13000);
 }
 
 /* ---------- saying something ----------
@@ -3749,6 +3751,7 @@ function liveHead(i){
    you, then what it cost or paid. */
 function runVerdict(){
   SWOOP_FROM=camS.v?{...camS.v}:null;
+  S.holdT=0;                        // the verdict climb does not wait
   S.phase='swoop'; S.swoop=0; S.swoopDir=1; jumbo.live=true; jumbo.mode='verdict';
   jumbo.sa=0;jumbo.sb=0;jumbo.say=0;jumbo.cols=0;
   S.flash=1; sfxCommit();
@@ -3884,7 +3887,7 @@ function countTo(k,to,ms){const t0=performance.now();(function s(){
 // the marquee carries the fact that you have taken a position on the night.
 el('backbtn').onclick=()=>{
   if(!S.pick)return;
-  SWOOP_FROM=null;S.phase='play';S.swoop=0;S.swoopDir=1;S.stamped=false;S.t=4;S.target=0;S.pickIn=0;S.pickSm=0;
+  SWOOP_FROM=null;S.holdT=0;S.phase='play';S.swoop=0;S.swoopDir=1;S.stamped=false;S.t=4;S.target=0;S.pickIn=0;S.pickSm=0;
   el('endbar').classList.remove('on');
   el('copy').style.transition='none';el('copy').style.opacity='1';
   el('marquee').style.opacity='';shownBeat=-1;
@@ -3897,7 +3900,7 @@ el('backbtn').onclick=()=>{
 function stopLive(){ clearInterval(LIVE.timer); clearInterval(lvPresT); LIVE.on=false; LIVE.i=-1;
   el('lvfeed').innerHTML=''; el('lvwrap').classList.remove('on'); el('lvbug').classList.remove('on');
   el('phone').classList.remove('live'); }
-el('replay').onclick=()=>{stopLive();SWOOP_FROM=null;
+el('replay').onclick=()=>{stopLive();SWOOP_FROM=null;S.holdT=0;
   el('reveal').classList.remove('on','lit','turned','done','miss');el('rvSlot').innerHTML='';MINTED=null;S.phase='play';S.t=0;S.target=0;S.swoop=0;S.swoopDir=1;S.stamped=false;S.pick=null;
   el('mqw').textContent='Green Bay at Kansas City · 8:15p ET';
   S.pickHot=null;S.pickMag=0;S.pickIn=0;S.thr=0;S.thrB=0;S.pickDir=null;S.pickSm=0;S.pickZone=0;
@@ -4406,11 +4409,15 @@ function frame(){
      in. Descending faster than it climbed is deliberate: the climb is a reveal and the
      drop is a return, and a return that takes as long as a reveal reads as a second one. */
   if(S.phase==='swoop'||S.phase==='done'){
-    /* .40 up, not .60. The climb is the frame the STAMP lives on, so its speed is how
-       long you get to read your own pick, and it holds STILL for the first .62 of it. At .60 the whole thing was over in 1.7 seconds
+    /* THE PAUSE IS A HELD CAMERA, NOT A SLOW ONE. The stamp is torn away by the climb, so
+       every previous attempt at a longer pause slowed the crane - which made the stamp
+       DRIFT for longer rather than SIT for longer, and dragged the board out with it. The
+       crane simply waits now: three seconds of nothing moving, then it goes at a sensible
+       pace. Freeze first, climb second, and the two are independent. At .60 the whole thing was over in 1.7 seconds
        and the stamp was gone inside 1.2 of them. The drop keeps its old pace: a return
        that takes as long as a reveal reads as a second reveal. */
-    S.swoop=clamp(S.swoop+dt*(S.swoopDir>0?.40:1.05)*S.swoopDir,0,1);
+    const waiting = S.swoopDir>0 && S.holdT && performance.now()<S.holdT;
+    if(!waiting)S.swoop=clamp(S.swoop+dt*(S.swoopDir>0?.52:1.05)*S.swoopDir,0,1);
     if(S.swoopDir<0&&S.swoop<=0){S.swoopDir=1;enterLive();}
     const k=ease(S.swoop),a=SWOOP_FROM||BEATS[MAXT],b=JUMBO_CAM;
     camT={cx:lerp(a.cx,b.cx,k),cy:lerp(a.cy,b.cy,k),cz:lerp(a.cz,b.cz,k),zoom:lerp(a.zoom,b.zoom,k),tilt:lerp(a.tilt,b.tilt,k),yaw:lerp(a.yaw,b.yaw,k)};
