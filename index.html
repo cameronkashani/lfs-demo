@@ -370,8 +370,11 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;image-rend
 /* THE PANEL IS THE PRODUCT DURING A GAME. The men are the event and the feed is what
    you came to read, so the split is not even: the field keeps the top for the throw and
    the two running totals, and everything below that belongs to the game as it is told. */
+/* 62, not 58. At 58 the panel started 45px below where the lane readouts finish, so a
+   band of empty grass sat between the men and the first thing you read. That gap is the
+   feed's, and the feed is the reason this page exists. */
 .lvwrap{position:absolute;left:0;right:0;bottom:0;
-  height:58%;min-height:calc(320px * var(--g));
+  height:62%;min-height:calc(340px * var(--g));
   padding:calc(10px * var(--g)) calc(18px * var(--g)) calc(var(--bot) + 8px * var(--g));
   opacity:0;pointer-events:none;z-index:6;display:flex;flex-direction:column;
   background:linear-gradient(180deg,rgba(7,6,5,0),rgba(7,6,5,.86) 18%,rgba(7,6,5,.96));
