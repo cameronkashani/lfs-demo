@@ -97,230 +97,206 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }</style>
 <style>
+/* ============================================================================
+   THE SCALE
+   The page before this had fourteen type sizes, nineteen steps of bone, and the
+   flare doing eight different jobs. Nothing was wrong with any single element and
+   the whole thing was unreadable, because a hierarchy needs things to be
+   DIFFERENT and everything was almost the same. So: six sizes, four text tones,
+   three surfaces, and one job for the accent.
+   ========================================================================== */
 :root{
-  --ink:#070605; --bone:#EDE4CF; --flare:#FF5A1E;
-  --pcA:#D9B44A;            /* Love */
-  --pcB:#EC7A62;            /* Mahomes */
-  --risk:#EC5A3A;
-  --u:1;
+  /* surfaces: three real steps, not three alphas of the same near black */
+  --g1:#0B0907;          /* the page */
+  --g2:#131009;          /* the panel */
+  --g3:#1E1810;          /* a card in the feed */
+  /* text: a ladder you can actually walk down */
+  --t1:#F2E9D4;          /* what you read */
+  --t2:#A39A89;          /* what you glance at */
+  --t3:#6B6459;          /* what labels things */
+  /* THE ACCENT HAS ONE JOB: YOU. Your margin, your streak in danger, your odds,
+     your tap. It appears nowhere else, so wherever it appears it is about you. */
+  --flare:#FF5A1E;
+  --risk:#F2542D;
+  /* the two men own two colours and nothing else uses them */
+  --pcA:#D9B44A;
+  --pcB:#EC7A62;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#0A0908;color:var(--bone);
-  font-family:'IBM Plex Mono',monospace;-webkit-font-smoothing:antialiased;
-  display:flex;flex-direction:column;align-items:center;gap:18px;padding:22px 14px 40px}
+body{background:#050403;color:var(--t1);font-family:'IBM Plex Mono',monospace;
+  -webkit-font-smoothing:antialiased;display:flex;flex-direction:column;align-items:center;
+  gap:18px;padding:22px 14px 40px}
 
-/* ---------- the review chrome, not part of the design ---------- */
+/* review chrome, not part of the design */
 .hdr{max-width:430px;width:100%}
-.hdr h1{font-family:'Anton',sans-serif;font-weight:400;font-size:26px;letter-spacing:.01em;
-  text-transform:uppercase;line-height:1}
-.hdr p{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
-  color:rgba(237,228,207,.45);margin-top:7px;line-height:1.9}
+.hdr h1{font-family:'Anton',sans-serif;font-weight:400;font-size:26px;text-transform:uppercase;line-height:1}
+.hdr p{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);
+  margin-top:7px;line-height:1.9}
 .ctl{max-width:430px;width:100%;display:flex;gap:8px;flex-wrap:wrap}
-.ctl button{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.2em;
-  text-transform:uppercase;color:rgba(237,228,207,.7);background:transparent;
-  border:1px solid rgba(237,228,207,.24);padding:9px 12px;cursor:pointer}
-.ctl button.on{color:var(--ink);background:var(--bone);border-color:var(--bone)}
+.ctl button{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--t2);background:transparent;
+  border:1px solid #2A241B;padding:9px 12px;cursor:pointer}
+.ctl button.on{color:#0B0907;background:var(--t1);border-color:var(--t1)}
 
-/* ---------- the frame ---------- */
-.phone{position:relative;width:100%;max-width:430px;height:min(932px,86vh);
-  background:var(--ink);overflow:hidden;display:flex;flex-direction:column;
+.phone{position:relative;width:100%;max-width:430px;height:min(932px,88vh);
+  background:var(--g1);overflow:hidden;display:flex;flex-direction:column;
   box-shadow:0 30px 70px rgba(0,0,0,.7)}
-.phone:after{content:"";position:absolute;inset:0;z-index:20;pointer-events:none;
-  background-image:radial-gradient(rgba(0,0,0,.5) 1px,transparent 1px);
-  background-size:3px 3px;opacity:.5;mix-blend-mode:multiply}
 
+/* ---------- top chrome ---------- */
 .top{flex-shrink:0;display:flex;justify-content:space-between;align-items:center;
-  padding:16px 18px 0;font-size:9.5px;letter-spacing:.26em;text-transform:uppercase;
-  color:rgba(237,228,207,.42)}
+  padding:15px 16px 0;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--t3)}
+.top .live{color:var(--t2)}
 
-/* ---------- the field, standing in ---------- */
-.field{position:relative;flex-shrink:0;height:23%;min-height:132px;
-  background:linear-gradient(180deg,#150e0a 0%,#1b1410 42%,#16261b 60%,#0f1c14 100%);
-  display:flex;align-items:flex-end;gap:10px;padding:0 16px 12px}
-.field:before{content:"THE TWO MEN STAND HERE";position:absolute;left:0;right:0;top:14%;
-  text-align:center;font-size:7.5px;letter-spacing:.3em;color:rgba(237,228,207,.16)}
+/* ---------- the field, and the bug that belongs on it ----------
+   The score, the clock and the quarter rail used to sit in the panel, pushing the
+   feed down by two rows. A score bug belongs over the pitch, and the top of this
+   band was empty anyway. */
+.field{position:relative;flex-shrink:0;height:30%;min-height:190px;
+  background:linear-gradient(180deg,#140D08 0%,#1A120C 40%,#152219 62%,#0D1B12 100%);
+  display:flex;flex-direction:column;padding:12px 16px 10px}
+.bug{flex-shrink:0}
+.bug .b1{display:flex;justify-content:space-between;align-items:baseline}
+.bug .sc{font-size:13px;letter-spacing:.06em;color:var(--t2)}
+.bug .sc b{font-weight:400;font-size:10px;letter-spacing:.16em;color:var(--t3)}
+.bug .sc .up{color:var(--t1)}
+.bug .clk{font-size:10px;letter-spacing:.18em;color:var(--t3)}
+.qs{display:flex;gap:3px;margin-top:8px}
+.qs span{flex:1;height:3px;background:#2A241B;overflow:hidden;transform:skewX(-24deg)}
+.qs span i{display:block;height:100%;width:0;background:var(--t2);transition:width .5s linear}
+.men{flex:1;display:flex;align-items:flex-end;gap:12px;padding-bottom:2px}
 .man{flex:1;text-align:center}
-.man b{font-family:'Anton',sans-serif;font-weight:400;font-size:26px;display:block;line-height:1}
-.man .bar{display:block;height:12px;margin-top:6px;background:rgba(7,6,5,.82);
-  border:1px solid rgba(237,228,207,.22);transform:skewX(-24deg);overflow:hidden}
-.man .bar s{display:block;height:100%;width:0;text-decoration:none;
-  background:rgba(237,228,207,.3);transition:width .5s ease}
-.man.mine .bar s{background:var(--flare)}
-.man span{display:block;font-size:7.5px;letter-spacing:.2em;margin-top:7px;
-  color:rgba(237,228,207,.45)}
+.man .n{font-family:'Anton',sans-serif;font-weight:400;font-size:28px;display:block;line-height:1;
+  color:var(--t1)}
+.man .bar{display:block;height:10px;margin-top:7px;background:rgba(0,0,0,.5);
+  transform:skewX(-24deg);overflow:hidden}
+.man .bar s{display:block;height:100%;width:0;text-decoration:none;transition:width .5s ease}
+.man.a .bar s{background:var(--pcA)} .man.b .bar s{background:var(--pcB)}
+.man .lb{display:block;font-size:10px;letter-spacing:.18em;margin-top:8px;color:var(--t3)}
+.man.mine .lb{color:var(--t2)}
+/* your margin is about YOU, so it is the one thing on the field wearing the accent.
+   It sits opposite the score, which is the shape every broadcast bug already uses:
+   the game on the left, your position on the right. */
+.marg{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--flare)}
+.bug .b2{display:flex;justify-content:flex-end;margin-top:2px}
 
 /* ---------- the panel ---------- */
-.panel{flex:1;min-height:0;display:flex;flex-direction:column;
-  padding:10px 18px 14px;
-  background:linear-gradient(180deg,rgba(7,6,5,0),rgba(7,6,5,.9) 12%,rgba(7,6,5,.98))}
+.panel{flex:1;min-height:0;display:flex;flex-direction:column;padding:12px 16px 14px;
+  background:var(--g2)}
 
-/* the bug */
-.bug{flex-shrink:0;font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;
-  padding-bottom:7px;border-bottom:1px solid rgba(237,228,207,.14)}
-.bug .r{display:flex;justify-content:space-between;align-items:center;margin-top:5px}
-.bug .r:first-child{margin-top:0}
-.score{font-size:10px;letter-spacing:.12em;color:rgba(237,228,207,.9)}
-.score b{font-weight:400;color:rgba(237,228,207,.45)}
-.score i{font-style:normal;color:rgba(237,228,207,.25)}
-.score .up{color:var(--bone)}
-.state{color:var(--flare)}
-.clk{font-size:8px;color:rgba(237,228,207,.5)}
-.qs{display:flex;gap:3px;width:52%}
-.qs span{flex:1;height:4px;background:rgba(237,228,207,.13);overflow:hidden;
-  transform:skewX(-24deg)}
-.qs span i{display:block;height:100%;width:0;background:var(--flare);transition:width .5s linear}
-
-/* ---------- 3. WHAT IS ON THE LINE ----------
-   The streak used to be a chip in the corner, the same size as the date, while eleven
-   nights were live. It is the loudest thing in the panel now, and it shares its slab with
-   the card, because those are the two halves of the same sentence: what you lose and what
-   you win. At risk it all goes red at once, edge included, so the state is readable from
-   the corner of an eye. */
-.stakes{flex-shrink:0;display:flex;align-items:stretch;gap:14px;
-  margin:10px 0 2px;padding:10px 13px 11px 12px;
-  background:rgba(237,228,207,.05);border-left:3px solid var(--mypc);
-  clip-path:polygon(0 0,100% 0,calc(100% - 8px) 100%,0 100%);
+/* ---------- what is on the line ---------- */
+.stakes{flex-shrink:0;display:flex;align-items:center;gap:14px;
+  padding:11px 14px 12px 12px;background:var(--g3);
+  border-left:3px solid var(--mypc);
   transition:background .4s ease,border-color .4s ease}
-.stakes.risk{background:rgba(236,90,58,.09);border-left-color:var(--risk);
-  animation:nag 2.4s ease-in-out infinite}
-@keyframes nag{0%,100%{box-shadow:inset 0 0 0 1px rgba(236,90,58,0)}
-  50%{box-shadow:inset 0 0 0 1px rgba(236,90,58,.55)}}
-.stakes i{display:block;font-style:normal;font-size:7.5px;letter-spacing:.24em;
-  text-transform:uppercase;color:rgba(237,228,207,.42)}
+.stakes.risk{background:#241209;border-left-color:var(--risk)}
 .st-l{flex:1;min-width:0}
-/* IT HAS TO WIN THE PANEL. At 34px it was the same visual weight as the tier word beside
-   it, which put "eleven nights" and "rare" on a level. They are not on a level. */
-.st-l b{font-family:'Anton',sans-serif;font-weight:400;font-size:50px;line-height:.88;
-  display:inline-block;margin:2px 7px 0 0;transition:color .4s ease}
+.st-l .k{display:block;font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--t3);margin-bottom:3px}
+.st-l b{font-family:'Anton',sans-serif;font-weight:400;font-size:48px;line-height:.86;
+  display:inline-block;margin-right:8px;color:var(--t1);transition:color .4s ease}
 .stakes.risk .st-l b{color:var(--risk)}
-.st-l em{font-style:normal;font-size:9px;letter-spacing:.2em;text-transform:uppercase;
-  color:rgba(237,228,207,.55)}
-/* the state is a stamp, not a caption */
-.st-l .tag{display:inline-block;margin-top:6px;padding:3px 7px 3px 8px;
-  font-size:7.5px;letter-spacing:.22em;text-transform:uppercase;
-  color:var(--ink);background:var(--flare);
-  clip-path:polygon(0 0,100% 0,calc(100% - 4px) 100%,0 100%)}
-.stakes.risk .st-l .tag{background:var(--risk)}
-.st-m{width:1px;background:rgba(237,228,207,.14);flex-shrink:0}
-.st-r{flex-shrink:0;text-align:right;align-self:center}
-.st-r b{display:block;font-family:'Anton',sans-serif;font-weight:400;font-size:22px;
-  line-height:1.1;margin:0 0 4px;color:var(--mypc)}
-.st-r em{font-style:normal;display:block;font-size:8px;letter-spacing:.18em;
+.st-l em{font-style:normal;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--t2)}
+/* An alarm that is on when nothing is wrong is not an alarm. Holding is quiet; the
+   filled stamp is held back for the state that actually wants your attention. */
+.st-l .tag{display:inline-block;margin-left:2px;padding:3px 8px;
+  font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--t3);background:transparent;border:1px solid #2F281E}
+.stakes.risk .st-l .tag{color:#0B0907;background:var(--risk);border-color:var(--risk)}
+.st-m{width:1px;align-self:stretch;background:#2A241B}
+.st-r{flex-shrink:0;text-align:right}
+.st-r b{display:block;font-family:'Anton',sans-serif;font-weight:400;font-size:19px;
+  line-height:1;margin-bottom:5px;color:var(--mypc)}
+.st-r em{font-style:normal;display:block;font-size:10px;letter-spacing:.16em;
   text-transform:uppercase;color:var(--flare)}
 .stakes.risk .st-r em{color:var(--risk)}
 
-/* ---------- the feed ---------- */
+/* ---------- the feed ----------
+   The reason to build this page standalone was to put the game and the room front
+   and centre, so this gets every pixel the rest does not need. */
 .feed{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;
-  display:flex;flex-direction:column;gap:7px;padding:10px 0 4px;scrollbar-width:none;
-  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 16px);
-  mask-image:linear-gradient(180deg,transparent 0,#000 16px)}
+  display:flex;flex-direction:column;gap:10px;padding:12px 0 6px;scrollbar-width:none;
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 18px);
+  mask-image:linear-gradient(180deg,transparent 0,#000 18px)}
 .feed::-webkit-scrollbar{display:none}
 
-.play{flex-shrink:0;background:rgba(237,228,207,.055);color:var(--bone);
-  border-left:3px solid var(--flare);
-  clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%);
-  padding:8px 13px 8px;box-shadow:2px 2px 0 rgba(0,0,0,.55);
-  animation:in .42s cubic-bezier(.2,1.25,.35,1) both}
-.play.turn{background:var(--bone);color:#0B0705;border-left-color:#C23A18}
+/* A PLAY IS A CARD AND A COMMENT IS NOT. That is the whole distinction and it only
+   works if the card is genuinely a step lighter than the ground it sits on. It was
+   five percent bone over near black before, which is not a step, it is a rumour.
+   The rule down its left is the colour of the man who made the play, so the feed
+   can be scanned for whose night it is without reading a word. */
+.play{flex-shrink:0;background:var(--g3);padding:10px 13px 11px;
+  border-left:3px solid var(--pcA);
+  animation:in .4s cubic-bezier(.2,1.25,.35,1) both}
+.play.by-b{border-left-color:var(--pcB)}
 .play .stamp{display:flex;justify-content:space-between;align-items:baseline;
-  font-size:7.5px;letter-spacing:.2em;color:rgba(237,228,207,.42)}
-.play.turn .stamp{color:rgba(11,7,5,.5)}
-.play .flag{color:var(--flare)}
-.play.turn .flag{color:#C23A18}
+  font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--t3)}
+.play .flag{color:var(--t1)}
 .play .txt{display:block;font-family:'Barlow Condensed',sans-serif;font-weight:600;
-  font-size:15px;line-height:1.25;margin-top:4px}
-.play.turn .txt{font-weight:700}
-.play .sc{display:block;font-size:8px;letter-spacing:.16em;color:rgba(237,228,207,.5);
-  margin-top:6px}
-.play .sc b{font-weight:400;color:var(--bone)}
-.play.turn .sc{color:rgba(11,7,5,.55)}
-.play.turn .sc b{color:#0B0705}
+  font-size:17px;line-height:1.24;letter-spacing:.005em;color:var(--t1);margin-top:5px}
+/* the lead change is the only inverted card in the run, because it is the only one
+   that changes what the night is worth */
+.play.turn{background:var(--t1);border-left-color:#C23A18}
+.play.turn .stamp{color:rgba(11,9,7,.45)}
+.play.turn .flag{color:#0B0907}
+.play.turn .txt{color:#0B0907;font-weight:700}
 
-/* ---------- 1. ONE TAP ----------
-   Two designed mechanisms went in the bin before this one. Emotions as words were feelings
-   bolted onto a betting screen; a tap per player read as a vote, and the vote is over. The
-   answer was the obvious thing: emoji with counts. It needs no explaining, it costs one
-   thumb, and everybody already knows how it works.
-
-   The counts are the interesting part. They are seeded from BOTH sides of the room: the
-   fire belongs to whoever the play just helped and the shrug to whoever it just hurt, so
-   the pair under a play is the split reacting and the bigger number tells you who is happy
-   without spending a word on it. */
-/* Two full width bars under every line put a lot of grey weight into a feed that is
-   supposed to read as text. Compact chips, hung on the right, do the same job and let the
-   slab stay a sentence with something small attached to it. */
-.rx{display:flex;gap:6px;margin-top:8px;justify-content:flex-end}
-.rx button{flex:0 0 auto;min-width:60px;display:flex;align-items:center;justify-content:center;gap:6px;
-  background:rgba(237,228,207,.05);border:1px solid rgba(237,228,207,.16);
-  padding:4px 9px 5px;cursor:pointer;line-height:1;
+.rx{display:flex;gap:6px;margin-top:9px;justify-content:flex-end}
+.rx button{flex:0 0 auto;min-width:62px;display:flex;align-items:center;justify-content:center;
+  gap:7px;background:rgba(242,233,212,.06);border:1px solid #2F281E;
+  padding:5px 10px 6px;cursor:pointer;line-height:1;
   transition:background .16s ease,border-color .16s ease,transform .12s ease}
-.play.turn .rx button{background:rgba(11,7,5,.06);border-color:rgba(11,7,5,.2)}
+.play.turn .rx button{background:rgba(11,9,7,.07);border-color:rgba(11,9,7,.2)}
 .rx .e{font-size:15px;line-height:1;
   font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif}
-.rx b{font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:9.5px;
-  font-variant-numeric:tabular-nums;color:rgba(237,228,207,.62)}
-.play.turn .rx b{color:rgba(11,7,5,.6)}
-.rx button.on{background:rgba(255,90,30,.16);border-color:rgba(255,90,30,.75)}
+.rx b{font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:11px;
+  font-variant-numeric:tabular-nums;color:var(--t2)}
+.play.turn .rx b{color:rgba(11,9,7,.6)}
+.rx button.on{background:rgba(255,90,30,.18);border-color:var(--flare)}
 .rx button.on b{color:var(--flare)}
 .rx button:active{transform:scale(.94)}
 .rx button.pop{animation:pop .34s cubic-bezier(.2,1.5,.4,1)}
-@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.14)}100%{transform:scale(1)}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.13)}100%{transform:scale(1)}}
 
-/* the night's running tally, in the footer under the frozen pick split */
-.tally{flex:1;display:flex;gap:12px;align-items:center}
-.tally span{display:flex;gap:5px;align-items:center;color:rgba(237,228,207,.5)}
-.tally .e{font-size:11px;line-height:1;
-  font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif}
-.tally b{font-weight:400;font-variant-numeric:tabular-nums}
-
-.cmt{flex-shrink:0;display:flex;gap:8px;align-items:baseline;padding-left:13px;
-  animation:in .42s cubic-bezier(.2,1.25,.35,1) both}
-.cmt .dot{flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:5px}
+/* people get no card at all. They sit on the ground the page is made of. */
+.cmt{flex-shrink:0;display:flex;gap:9px;align-items:baseline;padding:0 2px 0 13px;
+  animation:in .4s cubic-bezier(.2,1.25,.35,1) both}
+.cmt .dot{flex-shrink:0;width:7px;height:7px;border-radius:50%;margin-top:4px}
 .cmt.a .dot{background:var(--pcA)} .cmt.b .dot{background:var(--pcB)}
-.cmt .who{flex-shrink:0;font-size:9px;letter-spacing:.06em;color:rgba(237,228,207,.5)}
+.cmt .who{flex-shrink:0;font-size:10px;letter-spacing:.04em;color:var(--t3)}
 .cmt.a .who{color:var(--pcA)} .cmt.b .who{color:var(--pcB)}
-.cmt.me .who{color:var(--bone)}
-.cmt .t{font-family:'Barlow Condensed',sans-serif;font-weight:500;font-size:14.5px;
-  line-height:1.3;color:rgba(237,228,207,.92)}
+.cmt.me .who{color:var(--t1)}
+.cmt .t{font-family:'Barlow Condensed',sans-serif;font-weight:500;font-size:15px;
+  line-height:1.32;color:var(--t2)}
+.cmt.me .t{color:var(--t1)}
 
-.you{flex-shrink:0;font-size:9px;letter-spacing:.14em;text-transform:uppercase;
-  padding:6px 0 6px 11px;border-left:2px solid var(--flare);color:var(--flare);
-  animation:in .42s cubic-bezier(.2,1.25,.35,1) both}
+.you{flex-shrink:0;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  padding:7px 0 7px 11px;border-left:2px solid var(--flare);color:var(--flare);
+  animation:in .4s cubic-bezier(.2,1.25,.35,1) both}
 .you.bad{border-left-color:var(--risk);color:var(--risk)}
-.you b{font-weight:400;color:var(--bone)}
+.you b{font-weight:400;color:var(--t1)}
 
-/* ---------- 2. PRESENCE ----------
-   A static number is a fact. The same number moving is a nervous system. It counts people
-   HERE rather than people alive, because nobody is eliminated until the whistle and a
-   survivor count that drifted mid game would be a lie. It rises into the fourth quarter,
-   which is the arc we want anyway, and it jumps when something happens. */
-.pres{flex-shrink:0;display:flex;align-items:center;gap:8px;
-  margin-top:8px;padding-top:8px;border-top:1px solid rgba(237,228,207,.14);
-  font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;
-  color:rgba(237,228,207,.45)}
-.pres .blip{width:6px;height:6px;border-radius:50%;background:var(--flare);flex-shrink:0;
-  box-shadow:0 0 0 0 rgba(255,90,30,.55)}
+.pres{flex-shrink:0;display:flex;align-items:center;gap:9px;margin-top:10px;
+  padding-top:10px;border-top:1px solid #221C15;
+  font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--t3)}
+.pres .blip{width:6px;height:6px;border-radius:50%;background:var(--t2);flex-shrink:0}
 .pres .blip.go{animation:blip 1.1s ease-out}
-@keyframes blip{0%{box-shadow:0 0 0 0 rgba(255,90,30,.55)}
-  100%{box-shadow:0 0 0 9px rgba(255,90,30,0)}}
-.pres b{font-family:'Anton',sans-serif;font-weight:400;font-size:16px;letter-spacing:.01em;
-  color:var(--bone);font-variant-numeric:tabular-nums}
-.pres .d{margin-left:auto;color:var(--flare);opacity:0;transition:opacity .5s ease}
+@keyframes blip{0%{box-shadow:0 0 0 0 rgba(163,154,137,.5)}100%{box-shadow:0 0 0 9px rgba(163,154,137,0)}}
+.pres b{font-family:'Anton',sans-serif;font-weight:400;font-size:17px;letter-spacing:.01em;
+  color:var(--t1);font-variant-numeric:tabular-nums}
+.pres .d{margin-left:auto;color:var(--t2);opacity:0;transition:opacity .5s ease}
 .pres .d.show{opacity:1}
 
-.say{flex-shrink:0;display:flex;align-items:center;gap:10px;margin-top:9px;
-  padding:8px 9px 8px 11px;background:rgba(237,228,207,.08);
-  border-left:3px solid var(--mypc);
-  clip-path:polygon(0 0,100% 0,calc(100% - 8px) 100%,0 100%)}
+.say{flex-shrink:0;display:flex;align-items:center;gap:11px;margin-top:10px;
+  padding:9px 10px 9px 12px;background:var(--g3);border-left:3px solid var(--mypc)}
 .say .dot{width:7px;height:7px;border-radius:50%;background:var(--mypc);flex-shrink:0}
-.say input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:var(--bone);
-  font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:16px;padding:4px 0}
-.say input::placeholder{color:rgba(237,228,207,.5)}
-.say button{flex-shrink:0;font-family:'IBM Plex Mono',monospace;font-size:9px;
-  letter-spacing:.22em;text-transform:uppercase;color:rgba(237,228,207,.55);
-  background:transparent;border:1px solid rgba(237,228,207,.28);padding:8px 13px;
-  cursor:pointer;transition:color .18s ease,border-color .18s ease,background .18s ease}
-.say.armed button{color:#0B0705;background:var(--flare);border-color:var(--flare)}
+.say input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:var(--t1);
+  font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:17px;padding:4px 0}
+.say input::placeholder{color:var(--t3)}
+.say button{flex-shrink:0;font-family:'IBM Plex Mono',monospace;font-size:10px;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--t2);background:transparent;
+  border:1px solid #2F281E;padding:9px 13px;cursor:pointer;
+  transition:color .18s ease,border-color .18s ease,background .18s ease}
+.say.armed button{color:#0B0907;background:var(--flare);border-color:var(--flare)}
 
 @keyframes in{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
 </style>
@@ -328,28 +304,30 @@ body{background:#0A0908;color:var(--bone);
 <div class="hdr">
   <h1>The Live Window</h1>
   <p>Standalone. Nothing here is wired into the app yet.<br>
-     One tap reactions &#183; presence that moves &#183; the streak, loud</p>
+     Six type sizes &#183; four tones &#183; the accent means you</p>
 </div>
 
 <div class="phone" id="phone">
-  <div class="top"><span>LFS &#183; AUG 18</span><span id="topR">LIVE</span></div>
+  <div class="top"><span>LFS &#183; AUG 18</span><span class="live" id="topR">Live</span></div>
 
   <div class="field">
-    <div class="man" id="manA"><b id="ya">0</b><i class="bar"><s id="ba"></s></i><span>LOVE</span></div>
-    <div class="man" id="manB"><b id="yb">0</b><i class="bar"><s id="bb"></s></i><span>MAHOMES</span></div>
+    <div class="bug">
+      <div class="b1"><span class="sc" id="score"></span>
+        <span class="marg" id="state">Level</span></div>
+      <div class="b2"><span class="clk" id="clk">Q1 15:00</span></div>
+      <div class="qs" id="qs"></div>
+    </div>
+    <div class="men">
+      <div class="man a" id="manA"><span class="n" id="ya">0</span><i class="bar"><s id="ba"></s></i><span class="lb" id="lbA">Love</span></div>
+      <div class="man b" id="manB"><span class="n" id="yb">0</span><i class="bar"><s id="bb"></s></i><span class="lb" id="lbB">Mahomes</span></div>
+    </div>
   </div>
 
   <div class="panel">
-    <div class="bug">
-      <div class="r"><span class="score" id="score"></span><span class="state" id="state">TIED</span></div>
-      <div class="r"><span class="qs" id="qs"></span><span class="clk" id="clk">Q1 15:00</span></div>
-    </div>
-
     <div class="stakes" id="stakes">
       <div class="st-l">
-        <i>On the line</i>
-        <b id="stStreak">11</b><em>nights</em>
-        <span class="tag" id="stTag">Holding</span>
+        <span class="k">On the line</span>
+        <b id="stStreak">11</b><em>nights</em><span class="tag" id="stTag">Holding</span>
       </div>
       <div class="st-m"></div>
       <div class="st-r">
@@ -544,13 +522,15 @@ function setSide(p){
   el('sideB').classList.toggle('on',p==='MAHOMES');
   el('manA').classList.toggle('mine',p==='LOVE');
   el('manB').classList.toggle('mine',p==='MAHOMES');
+  el('lbA').textContent='Love'+(p==='LOVE'?' \u00B7 you':'');
+  el('lbB').textContent='Mahomes'+(p==='MAHOMES'?' \u00B7 you':'');
   el('stTier').textContent=S.tier;
 }
 
 function head(n){
   const g=GAME.gb[n],k=GAME.kc[n];
   el('score').innerHTML='<b>GB</b> <span class="'+(g>=k?'up':'')+'">'+g+'</span>'+
-    ' <i>\u00B7</i> <b>KC</b> <span class="'+(k>=g?'up':'')+'">'+k+'</span>';
+    '&nbsp;&nbsp;<b>KC</b> <span class="'+(k>=g?'up':'')+'">'+k+'</span>';
   el('clk').textContent=GAME.clock[n];
   const w=qAt(n);
   [...el('qs').children].forEach((sp,x)=>{
@@ -560,19 +540,19 @@ function head(n){
   el('ba').style.width=clamp(la/320*100,0,100)+'%';
   el('bb').style.width=clamp(ma/320*100,0,100)+'%';
   const mine=PICK==='LOVE'?la:ma, other=PICK==='LOVE'?ma:la, d=mine-other;
-  el('state').textContent = d===0?'TIED':d>0?'YOU UP '+d:'YOU DOWN '+(-d);
+  el('state').textContent = d===0?'Level':d>0?'You up '+d:'You down '+(-d);
 
   const p=odds(n), fin=n===LAST;
   el('stStreak').textContent = fin ? (p>=50?String(STREAK+1):'0') : String(STREAK);
   el('stTag').textContent = fin ? (p>=50?'Survived':'Gone') : (p>=50?'Holding':'At risk');
   el('stPct').textContent = fin ? (p>=50?'Minted':'Not tonight') : p+'% to mint';
   el('stakes').classList.toggle('risk',p<50);
-  el('topR').textContent = fin?'FINAL':'LIVE';
+  el('topR').textContent = fin?'Final':'Live';
 
   if(on50!==null && (p>=50)!==on50){
     const d2=document.createElement('div');
     d2.className='you'+(p>=50?'':' bad');
-    d2.innerHTML=(p>=50?'Your card is back on. <b>':'Your card is slipping. <b>')+p+'% to mint '+SIDE[PICK].tier+'</b>';
+    d2.innerHTML=(p>=50?'Your card is back on &#183; <b>':'Your card is slipping &#183; <b>')+p+'% to mint</b>';
     add(d2);
   }
   on50=p>=50;
@@ -588,8 +568,8 @@ function step(){
   seen.lead=lead;
 
   const d=document.createElement('div');
-  d.className='play'+(turned?' turn':'');
-  const flag=L.s==='td'?'Touchdown':L.s==='fg'?'Field goal':'';
+  d.className='play by-'+L.w+(turned?' turn':'');
+  const flag=L.s==='td'?'Touchdown':L.s==='fg'?'Field goal':'Final';
   d.innerHTML='<div class="stamp"><span>'+GAME.clock[i]+'</span>'+
               (flag?'<span class="flag">'+flag+'</span>':'')+'</div>'+
               '<span class="txt">'+(turned?'\u25B2 ':'')+L.t+'</span>'+
@@ -622,9 +602,9 @@ function run(){
   el('sayIn').value=''; el('say').classList.remove('armed');
   head(0); el('ya').textContent='0'; el('yb').textContent='0';
   el('ba').style.width='0'; el('bb').style.width='0';
-  el('clk').textContent='Q1 15:00'; el('state').textContent='TIED';
+  el('clk').textContent='Q1 15:00'; el('state').textContent='Level';
   el('stStreak').textContent=String(STREAK); el('stTag').textContent='Holding';
-  el('stPct').textContent='50% to mint'; el('topR').textContent='LIVE';
+  el('stPct').textContent='50% to mint'; el('topR').textContent='Live';
   setTimeout(()=>{step(); timer=setInterval(step,STOP);},500);
 }
 
