@@ -397,11 +397,12 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;image-rend
    score and the clock BELOW the two men, which is backwards for a score bug and cost the
    feed two rows it wanted back. It hangs off the top chrome now, above the players, the
    way it does in the study. */
-/* 44, not 58. At 58 the rail landed in the lamp rig and the block sat nineteen pixels off
-   the top of their helmets, which reads as crowding rather than as a bug hung above the
-   play. It tucks under the top chrome instead, and the two rows are pulled a little
-   tighter so the whole thing takes less air. */
-.lvbug{position:absolute;left:0;right:0;top:calc(var(--ins) + 44px * var(--g));z-index:7;
+/* NO MAGIC NUMBER. This was 58px, then 44px, and it was still landing in the lamp rig on
+   a wider frame, because a fixed offset cannot know where the top chrome ends or where
+   the camera puts the lights. Both of those move with the viewport, so the position is
+   MEASURED at layout time instead: it tucks a fixed gap under the chrome, wherever the
+   chrome happens to end. placeBug() owns the top; do not set it here. */
+.lvbug{position:absolute;left:0;right:0;z-index:7;
   padding:0 calc(18px * var(--g));font-family:'IBM Plex Mono',monospace;
   opacity:0;pointer-events:none;transition:opacity .45s ease}
 .lvbug.on{opacity:1}
@@ -412,7 +413,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;image-rend
   font-family:'Anton',sans-serif;line-height:1}
 .lvscore .tm{font-family:'IBM Plex Mono',monospace;font-size:calc(9px * var(--g));
   letter-spacing:.16em;color:#8C8064}
-.lvscore b{font-weight:400;font-size:calc(26px * var(--g));color:#F8EBC8;
+.lvscore b{font-weight:400;font-size:calc(23px * var(--g));color:#F8EBC8;
   text-shadow:0 0 10px rgba(255,196,90,.45)}
 .lvscore b.dim{color:#6E6549;text-shadow:none}
 .lvscore .gap{width:calc(12px * var(--g))}
@@ -421,7 +422,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;image-rend
   color:var(--flare);white-space:nowrap}
 .lvq{font-size:calc(9.5px * var(--g));letter-spacing:.2em;color:#8C8064;white-space:nowrap}
 .lvqs{flex:1;display:flex;gap:calc(4px * var(--g));margin-left:calc(10px * var(--g))}
-.lvqs span{flex:1;height:calc(6px * var(--g));background:rgba(255,214,140,.12);
+.lvqs span{flex:1;height:calc(5px * var(--g));background:rgba(255,214,140,.12);
   overflow:hidden;transform:skewX(-24deg)}
 .lvqs span i{display:block;height:100%;width:0;background:#D9AE52;
   box-shadow:0 0 8px rgba(255,196,90,.5);transition:width .5s linear}
@@ -1634,6 +1635,7 @@ function resize(){const r=el('phone').getBoundingClientRect();
   // read once here, never per frame: a transform does not move offsetTop, but reading it
   // in the loop would force layout against the styles the loop is writing.
   const m=el('marquee');MQ_Y=m.offsetTop+m.offsetHeight*.5;
+  placeBug();
   if(typeof fileMeasure==='function')fileMeasure();}
 addEventListener('resize',resize);
 const lerp=(a,b,t)=>a+(b-a)*t,clamp=(v,a,b)=>v<a?a:v>b?b:v;
@@ -3202,6 +3204,36 @@ const GAME={
 /* Where you are in the game, read off the clock string so there is one source for it.
    HALF is the end of the second and FINAL is the end of the fourth, which is what they
    mean; everything else is fifteen minutes counting down. */
+/* WHERE THE BUG SITS. Measured, not guessed. Two fixed offsets were tried and both
+   landed the quarter rail in the lamp rig on a frame wider than the one they were tuned
+   on, because a constant cannot know where the top chrome ends. This reads the chrome's
+   actual bottom and tucks the bug a fixed gap under it, so the relationship holds at any
+   size. Called from resize(), which is the only place the frame can change. */
+function placeBug(){
+  const b=el('lvbug'); if(!b)return;
+  const ph=el('phone').getBoundingClientRect(), tp=el('top').getBoundingClientRect();
+  const chrome=tp.bottom-ph.top;
+  /* It has to live in the band between the top chrome and the lamp rig, and on a 932
+     frame that band is only about 78px. So it is placed against the chrome and CENTRED
+     in whatever is left, rather than dropped at a fixed offset and hoping. The mast
+     positions come from the same projection the canvas draws them with, so this cannot
+     drift out of register with the lights the way a constant did twice. */
+  let ceiling=null;
+  try{
+    const ys=[];
+    MASTS.forEach(m=>{const q=proj(m[0],m[1],m[2]);
+      if(q.vis&&q.x>-40&&q.x<W+40)ys.push(q.y-Math.max(q.s*.8,8)*.15);});
+    if(ys.length)ceiling=Math.min(...ys);
+  }catch(e){}
+  const h=b.offsetHeight||50, gap=7*G;
+  let top=chrome+gap;
+  if(ceiling!==null){
+    const slack=(ceiling-gap)-(chrome+gap)-h;      // room left over inside the band
+    if(slack>0)top=chrome+gap+slack*0.35;          // biased upward, not centred
+  }
+  b.style.top=Math.round(top)+'px';
+}
+
 function qAt(i){
   const c=GAME.clock[clamp(i,0,GAME.clock.length-1)];
   if(c==='HALF')return {q:2,p:1};
@@ -3816,6 +3848,10 @@ function enterLive(){
   cardInit(); sayInit();
   el('lvwrap').classList.add('on'); el('lvbug').classList.add('on');
   el('phone').classList.add('live');
+  /* resize() places the bug too, but it runs against whatever camera is current, and the
+     live shot is still easing in for about a second after this. Place it again once the
+     lift has settled, or the ceiling is read off the wrong frame. */
+  placeBug(); setTimeout(placeBug,1100);
   liveStep();
   LIVE.timer=setInterval(liveStep,2400);
 }
