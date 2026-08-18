@@ -384,62 +384,98 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;image-rend
    the left with a fact about YOU on the right: the score against your margin, and where
    you are in the game against what the clock says. The quarter rail borrows the tab
    rail's skew, because it is the same idea - a run of segments you are partway through. */
-.lvhd{font-family:'IBM Plex Mono',monospace;font-size:calc(8.5px * var(--g));
-  letter-spacing:.22em;text-transform:uppercase;flex-shrink:0;
-  padding-bottom:calc(7px * var(--g));border-bottom:1px solid rgba(237,228,207,.14)}
+/* ---------- THE BUG ----------
+   Ported from the standalone study. It reads as a scoreboard through TREATMENT rather
+   than through furniture: lit amber digits with the trailing side unlit, and a segmented
+   rail with real weight. A hung housing was tried and cut - it stood in front of the men,
+   which is the one thing the top of this frame cannot afford. */
+.top.inplay .streak{opacity:0;transition:opacity .4s ease}
+.lvhd{font-family:'IBM Plex Mono',monospace;flex-shrink:0;
+  padding-bottom:calc(8px * var(--g));border-bottom:1px solid rgba(237,228,207,.14)}
 .lvrow{display:flex;justify-content:space-between;align-items:center;
-  margin-top:calc(5px * var(--g))}
+  margin-top:calc(8px * var(--g))}
 .lvrow:first-child{margin-top:0}
-.lvscore{color:rgba(237,228,207,.9);font-size:calc(10px * var(--g));letter-spacing:.12em}
-.lvscore b{font-weight:400;color:rgba(237,228,207,.45)}
-.lvscore i{font-style:normal;color:rgba(237,228,207,.25)}
-.lvscore .up{color:#EDE4CF}
-.lvq{color:rgba(237,228,207,.5);font-size:calc(8px * var(--g))}
-.lvstate{color:#FF5A1E}
-.lvqs{display:flex;gap:calc(3px * var(--g));width:52%}
-.lvqs span{flex:1;height:calc(4px * var(--g));background:rgba(237,228,207,.13);
+.lvscore{display:flex;align-items:baseline;gap:calc(7px * var(--g));
+  font-family:'Anton',sans-serif;line-height:1}
+.lvscore .tm{font-family:'IBM Plex Mono',monospace;font-size:calc(9px * var(--g));
+  letter-spacing:.16em;color:#8C8064}
+.lvscore b{font-weight:400;font-size:calc(26px * var(--g));color:#F8EBC8;
+  text-shadow:0 0 10px rgba(255,196,90,.45)}
+.lvscore b.dim{color:#6E6549;text-shadow:none}
+.lvscore .gap{width:calc(12px * var(--g))}
+/* the accent has one job in here and it is you */
+.lvstate{font-size:calc(9.5px * var(--g));letter-spacing:.18em;text-transform:uppercase;
+  color:var(--flare);white-space:nowrap}
+.lvq{font-size:calc(9.5px * var(--g));letter-spacing:.2em;color:#8C8064;white-space:nowrap}
+.lvqs{flex:1;display:flex;gap:calc(4px * var(--g));margin-left:calc(10px * var(--g))}
+.lvqs span{flex:1;height:calc(6px * var(--g));background:rgba(255,214,140,.12);
   overflow:hidden;transform:skewX(-24deg)}
-.lvqs span i{display:block;height:100%;width:0;background:#FF5A1E}
-/* ---------- the card, live ----------
-   The question the whole game is actually asking is "am I getting it", and until now the
-   app only answered that at the whistle. This answers it every stop. It is built like the
-   collection's cards rather than like the feed - the player's own data colour down the
-   edge, the tier in that colour - so the thing you are chasing looks like the thing you
-   would win, not like another status bar. The percentage is the answer and it carries its
-   own verdict in its colour, which is why there is no separate ON TRACK chip: a number
-   under fifty already says you are losing. */
-.lvcard{flex-shrink:0;display:flex;justify-content:space-between;align-items:center;
-  gap:calc(12px * var(--g));margin:calc(9px * var(--g)) 0 calc(2px * var(--g));
-  padding:calc(9px * var(--g)) calc(12px * var(--g)) calc(10px * var(--g));
-  background:rgba(237,228,207,.05);border-left:calc(3px * var(--g)) solid var(--pc,#D9B44A);
-  clip-path:polygon(0 0,100% 0,calc(100% - 8px * var(--g)) 100%,0 100%)}
-.lvc-l{min-width:0}
-.lvc-k{display:block;font-family:'IBM Plex Mono',monospace;font-size:calc(7.5px * var(--g));
-  letter-spacing:.24em;text-transform:uppercase;color:rgba(237,228,207,.42)}
-.lvc-n{display:block;font-family:'Anton',sans-serif;font-size:calc(17px * var(--g));
-  line-height:1.1;color:#EDE4CF;margin:calc(3px * var(--g)) 0 calc(3px * var(--g))}
-.lvc-n b{font-weight:400;color:var(--pc,#D9B44A)}
-.lvc-m{display:block;font-family:'IBM Plex Mono',monospace;font-size:calc(7.5px * var(--g));
-  letter-spacing:.16em;text-transform:uppercase;color:rgba(237,228,207,.5)}
-.lvc-r{text-align:right;flex-shrink:0}
-.lvc-p{display:block;font-family:'Anton',sans-serif;font-size:calc(30px * var(--g));
-  line-height:.95;color:#FF5A1E;transition:color .3s ease}
-.lvc-p.risk{color:#EC5A3A}
-.lvc-p.gone{color:#6b6455}
-.lvc-s{display:block;font-family:'IBM Plex Mono',monospace;font-size:calc(7.5px * var(--g));
-  letter-spacing:.22em;text-transform:uppercase;color:rgba(237,228,207,.45);
-  margin-top:calc(3px * var(--g))}
+.lvqs span i{display:block;height:100%;width:0;background:#D9AE52;
+  box-shadow:0 0 8px rgba(255,196,90,.5);transition:width .5s linear}
 
-/* YOUR STAKE IS THE THIRD VOICE. The publication gets a slab and people go unhoused;
-   this is neither, because it is not somebody talking, it is the game telling you what
-   just happened to your card. Thin, ruled, mono, and it only ever fires on a flip. */
+/* ---------- WHAT IS ON THE LINE ----------
+   The streak was a chip in the corner the size of the date while eleven nights were live.
+   It shares this slab with the card because those are the two halves of one sentence:
+   what you lose and what you win. The slab takes a tint of your man's colour so it is
+   visibly YOURS rather than one more card in the feed. */
+.lvcard{flex-shrink:0;display:flex;align-items:center;gap:calc(13px * var(--g));
+  margin:calc(10px * var(--g)) 0 calc(2px * var(--g));
+  padding:calc(10px * var(--g)) calc(13px * var(--g)) calc(11px * var(--g)) calc(11px * var(--g));
+  background:var(--mytint,#241C0B);border-left:calc(3px * var(--g)) solid var(--pc,#D9B44A);
+  transition:background .4s ease,border-color .4s ease}
+.lvcard.risk{background:#2C1109;border-left-color:#F2542D}
+.lvc-l{flex:1;min-width:0}
+.lvc-k{display:block;font-family:'IBM Plex Mono',monospace;font-size:calc(9px * var(--g));
+  letter-spacing:.2em;text-transform:uppercase;color:rgba(237,228,207,.42);
+  margin-bottom:calc(3px * var(--g))}
+.lvc-l b{font-family:'Anton',sans-serif;font-weight:400;font-size:calc(44px * var(--g));
+  line-height:.86;display:inline-block;margin-right:calc(7px * var(--g));color:#EDE4CF;
+  transition:color .4s ease}
+.lvcard.risk .lvc-l b{color:#F2542D}
+.lvc-l em{font-style:normal;font-family:'IBM Plex Mono',monospace;
+  font-size:calc(9px * var(--g));letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(237,228,207,.55)}
+/* an alarm that is on when nothing is wrong is not an alarm */
+.lvc-tag{display:inline-block;margin-left:calc(2px * var(--g));
+  padding:calc(3px * var(--g)) calc(7px * var(--g));font-family:'IBM Plex Mono',monospace;
+  font-size:calc(9px * var(--g));letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(237,228,207,.42);background:transparent;border:1px solid rgba(237,228,207,.18)}
+.lvcard.risk .lvc-tag{color:#0B0705;background:#F2542D;border-color:#F2542D}
+.lvc-m2{width:1px;align-self:stretch;background:rgba(237,228,207,.14)}
+.lvc-r{flex-shrink:0;text-align:right;align-self:center}
+.lvc-tier{display:block;font-family:'Anton',sans-serif;font-size:calc(18px * var(--g));
+  line-height:1;margin-bottom:calc(4px * var(--g));color:var(--pc,#D9B44A)}
+.lvc-s{display:block;font-family:'IBM Plex Mono',monospace;font-size:calc(9px * var(--g));
+  letter-spacing:.16em;text-transform:uppercase;color:var(--flare)}
+.lvcard.risk .lvc-s{color:#F2542D}
+
+/* ---------- YOUR STAKE, WHEN IT MOVES ---------- */
 .lvyou{flex-shrink:0;font-family:'IBM Plex Mono',monospace;
-  font-size:calc(9px * var(--g));letter-spacing:.14em;text-transform:uppercase;
-  padding:calc(6px * var(--g)) 0 calc(6px * var(--g)) calc(11px * var(--g));
-  border-left:calc(2px * var(--g)) solid #FF5A1E;color:#FF5A1E;
+  font-size:calc(9.5px * var(--g));letter-spacing:.14em;text-transform:uppercase;
+  padding:calc(7px * var(--g)) 0 calc(7px * var(--g)) calc(11px * var(--g));
+  border-left:calc(2px * var(--g)) solid var(--flare);color:var(--flare);
   animation:lvin .42s cubic-bezier(.2,1.25,.35,1) both}
-.lvyou.risk{border-left-color:#EC5A3A;color:#EC5A3A}
+.lvyou.risk{border-left-color:#F2542D;color:#F2542D}
 .lvyou b{font-weight:400;color:#EDE4CF}
+
+/* ---------- PRESENCE ----------
+   A static number is a fact. The same number moving is a nervous system. It counts people
+   HERE rather than people alive, because nobody is eliminated until the whistle and a
+   survivor count that drifted mid game would be the one dishonest number on the screen. */
+.lvpres{flex-shrink:0;display:flex;align-items:center;gap:calc(9px * var(--g));
+  margin-top:calc(9px * var(--g));padding-top:calc(9px * var(--g));
+  border-top:1px solid rgba(237,228,207,.14);font-family:'IBM Plex Mono',monospace;
+  font-size:calc(9px * var(--g));letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(237,228,207,.42)}
+.lvblip{width:calc(6px * var(--g));height:calc(6px * var(--g));border-radius:50%;
+  background:rgba(237,228,207,.6);flex-shrink:0}
+.lvblip.go{animation:lvblip 1.1s ease-out}
+@keyframes lvblip{0%{box-shadow:0 0 0 0 rgba(237,228,207,.45)}
+  100%{box-shadow:0 0 0 calc(9px * var(--g)) rgba(237,228,207,0)}}
+.lvpres b{font-family:'Anton',sans-serif;font-weight:400;font-size:calc(15px * var(--g));
+  letter-spacing:.01em;color:#EDE4CF;font-variant-numeric:tabular-nums}
+.lvpresD{margin-left:auto;color:rgba(237,228,207,.6);opacity:0;transition:opacity .5s ease}
+.lvpresD.show{opacity:1}
 
 /* a real scroll container so scrollTop/scrollHeight stay honest, but the PAN is driven
    by hand in JS: touch-action:none upstream means this would never pan on a phone. */
@@ -453,43 +489,56 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;image-rend
   mask-image:linear-gradient(180deg,transparent 0,#000 calc(16px * var(--g)))}
 .lvfeed::-webkit-scrollbar{display:none}
 
-/* THE PUBLICATION GETS A SLAB, PEOPLE DO NOT. That is the whole distinction: a game
-   update is the same ink panel the editorial voice uses everywhere else in the product,
-   and a comment is a person talking, so it is unhoused, indented, and carries a handle
-   and the colour of the man they backed. No legend needed. */
-.lvline{background:rgba(7,6,5,.94);color:#EDE4CF;flex-shrink:0;
-  font-family:'Barlow Condensed',sans-serif;font-weight:600;
-  font-size:calc(15px * var(--g));line-height:1.25;letter-spacing:.01em;
-  padding:calc(8px * var(--g)) calc(13px * var(--g)) calc(9px * var(--g));
-  clip-path:polygon(calc(6px * var(--g)) 0,100% 0,calc(100% - 6px * var(--g)) 100%,0 100%);
-  box-shadow:calc(2px * var(--g)) calc(2px * var(--g)) 0 rgba(0,0,0,.55);
-  border-left:calc(3px * var(--g)) solid #FF5A1E;
+/* THE PUBLICATION GETS A CARD, PEOPLE DO NOT. That is the whole distinction, and it only
+   works if the card is a real step lighter than the ground it sits on: at five percent
+   bone over near black it was not a step, it was a rumour. The rule down its left is the
+   colour of the man who made the play, so the feed can be scanned for whose night it is
+   without reading a word. */
+.lvline{background:#1E1810;color:#EDE4CF;flex-shrink:0;
+  padding:calc(8px * var(--g)) calc(12px * var(--g)) calc(9px * var(--g));
+  border-left:calc(3px * var(--g)) solid #D9B44A;
   animation:lvin .42s cubic-bezier(.2,1.25,.35,1) both}
-.lvline .lvt{display:flex;justify-content:space-between;align-items:baseline;
+.lvline.by-b{border-left-color:#EC7A62}
+/* the meta row carries the reactions. On their own line beneath the text they added about
+   a third to every card, and thirteen of those is most of a screen. */
+.lvline .lvt{display:flex;justify-content:space-between;align-items:center;
+  gap:calc(9px * var(--g));min-height:calc(22px * var(--g));
   font-family:'IBM Plex Mono',monospace;font-weight:400;
-  font-size:calc(7.5px * var(--g));letter-spacing:.2em;color:rgba(237,228,207,.42);
-  margin-bottom:calc(4px * var(--g))}
-/* a scoring play gets flagged and then says what the score became. Everything else is
-   just a gain, and a gain that announces itself as loudly as a touchdown is a feed you
-   stop reading. */
-.lvline .lvflag{color:#FF5A1E}
-.lvline .lvsc{display:block;font-family:'IBM Plex Mono',monospace;font-weight:400;
-  font-size:calc(8px * var(--g));letter-spacing:.16em;color:rgba(237,228,207,.5);
-  margin-top:calc(6px * var(--g))}
-.lvline .lvsc b{font-weight:400;color:#EDE4CF}
-.lvline.turn .lvflag{color:#C23A18}
-.lvline.turn .lvsc{color:rgba(11,7,5,.55)}
-.lvline.turn .lvsc b{color:#0B0705}
-.lvline.final .lvsc{color:rgba(11,7,5,.55)}
-.lvline.final .lvsc b{color:#0B0705}
-/* the turn is the only line that gets inverted, because it is the only one that
-   changes what the card is worth */
-.lvline.turn{background:#EDE4CF;color:#0B0705;font-weight:700;border-left-color:#C23A18}
-.lvline.turn .lvt{color:rgba(11,7,5,.5)}
+  font-size:calc(9px * var(--g));letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(237,228,207,.42)}
+.lvline .lvmeta{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lvline .lvflag{color:#EDE4CF}
+.lvline .lvtxt{display:block;font-family:'Barlow Condensed',sans-serif;font-weight:600;
+  font-size:calc(16px * var(--g));line-height:1.22;color:#EDE4CF;margin-top:calc(4px * var(--g))}
+/* the lead change is the only inverted card in the run, because it is the only one that
+   changes what the night is worth */
+.lvline.turn{background:#EDE4CF;border-left-color:#C23A18}
+.lvline.turn .lvt{color:rgba(11,7,5,.45)}
+.lvline.turn .lvflag{color:#0B0705}
+.lvline.turn .lvtxt{color:#0B0705;font-weight:700}
 .lvline.turn i{font-style:normal;color:#C23A18}
-.lvline.final{background:#EDE4CF;color:#0B0705;font-family:'Anton',sans-serif;
-  font-weight:400;font-size:calc(18px * var(--g));border-left-color:#C23A18}
-.lvline.final .lvt{color:rgba(11,7,5,.5)}
+
+/* ---------- ONE TAP ----------
+   Two emoji, seeded from BOTH sides of the room: the fire belongs to whoever the play
+   just helped and the shrug to whoever it just hurt, so the pair under a play is the
+   split reacting and the bigger number says who is happy without spending a word. */
+.lvrx{flex-shrink:0;display:flex;gap:calc(5px * var(--g))}
+.lvrx button{flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+  gap:calc(5px * var(--g));background:rgba(242,233,212,.06);
+  border:1px solid rgba(242,233,212,.14);padding:calc(4px * var(--g)) calc(8px * var(--g));
+  cursor:pointer;line-height:1;
+  transition:background .16s ease,border-color .16s ease,transform .12s ease}
+.lvline.turn .lvrx button{background:rgba(11,7,5,.07);border-color:rgba(11,7,5,.2)}
+.lvrx .e{font-size:calc(13px * var(--g));line-height:1;
+  font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif}
+.lvrx b{font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:calc(10px * var(--g));
+  font-variant-numeric:tabular-nums;color:rgba(237,228,207,.62)}
+.lvline.turn .lvrx b{color:rgba(11,7,5,.6)}
+.lvrx button.on{background:rgba(255,90,30,.18);border-color:var(--flare)}
+.lvrx button.on b{color:var(--flare)}
+.lvrx button:active{transform:scale(.94)}
+.lvrx button.pop{animation:lvpop .34s cubic-bezier(.2,1.5,.4,1)}
+@keyframes lvpop{0%{transform:scale(1)}40%{transform:scale(1.13)}100%{transform:scale(1)}}
 
 .lvcom{flex-shrink:0;display:flex;gap:calc(8px * var(--g));align-items:baseline;
   padding-left:calc(13px * var(--g));animation:lvin .42s cubic-bezier(.2,1.25,.35,1) both}
@@ -1322,29 +1371,34 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;image-rend
   <div class="lvwrap" id="lvwrap">
     <div class="lvhd">
       <div class="lvrow">
-        <span class="lvscore" id="lvscore"><b>GB</b> 0 <i></i> <b>KC</b> 0</span>
-        <span class="lvstate" id="lvstate">TIED</span>
+        <span class="lvscore" id="lvscore">
+          <span class="tm">GB</span><b id="lvGB">0</b>
+          <span class="gap"></span>
+          <span class="tm">KC</span><b id="lvKC">0</b>
+        </span>
+        <span class="lvstate" id="lvstate">Level</span>
       </div>
       <div class="lvrow">
-        <span class="lvqs" id="lvqs"></span>
         <span class="lvq" id="lvq">Q1 15:00</span>
+        <span class="lvqs" id="lvqs"></span>
       </div>
     </div>
     <div class="lvcard" id="lvcard">
       <div class="lvc-l">
-        <span class="lvc-k">Tonight's card</span>
-        <span class="lvc-n" id="lvcName">Jordan <b>Love</b></span>
-        <span class="lvc-m" id="lvcMeta">RARE &#183; 29% of the room</span>
+        <span class="lvc-k">On the line</span>
+        <b id="lvcStreak">11</b><em>nights</em><span class="lvc-tag" id="lvcTag">Holding</span>
       </div>
+      <div class="lvc-m2"></div>
       <div class="lvc-r">
-        <span class="lvc-p" id="lvcPct">50%</span>
-        <span class="lvc-s" id="lvcState">TO MINT</span>
+        <span class="lvc-tier" id="lvcTier">RARE</span>
+        <span class="lvc-s" id="lvcState">50% to mint</span>
       </div>
     </div>
     <div class="lvfeed" id="lvfeed"></div>
-    <div class="lvsplit" id="lvsplit">
-      <span class="lvs-a" id="lvsA">LOVE 29%</span>
-      <span class="lvs-b" id="lvsB">MAHOMES 71%</span>
+    <div class="lvpres">
+      <span class="lvblip" id="lvblip"></span>
+      <b id="lvpresN">8,200</b><span>here now</span>
+      <span class="lvpresD" id="lvpresD"></span>
     </div>
     <form class="lvsay" id="lvsay" autocomplete="off">
       <span class="lvsay-dot" id="lvsayDot"></span>
@@ -3409,6 +3463,7 @@ function sayArm(){ const S2=sayEl();
 function sayInit(){
   const S2=sayEl(), C=CARDS_BY_SIDE[S.pick]||CARDS_BY_SIDE.LOVE;
   S2.form.style.setProperty('--mypc',C.pc);
+  S2.form.style.background=C.tint;
   S2.input.value=''; sayArm();
 }
 function saySend(){
@@ -3465,18 +3520,98 @@ function feedAdd(node){
   f.appendChild(node);
   if(follow)f.scrollTop=f.scrollHeight;
 }
+/* ---------- ONE TAP ----------
+   Two emoji, in surrogate escapes rather than literal characters so the source stays pure
+   ASCII. Ported from the standalone study, along with the thing that makes the numbers
+   worth reading: despair is POSITIONAL, not per play. Weighting the shrug purely by crowd
+   size made it beat the fire on your own touchdown, because the side that just lost ground
+   is the bigger one - which reads awfully and is also wrong, since one score does not bury
+   a man who is still ahead. */
+const LVRX=[{k:'fire',e:'🔥'},{k:'smug',e:'😤'}];
+const lvClimb=[];
+function lvSeed(n){
+  const L=GAME.line[n];
+  const size=L.s==='td'?1:L.s==='fg'?.58:.34;
+  const yd=+((L.t.match(/(\d+)\s*yard/)||[0,14])[1]);
+  const spec=clamp(yd/34,.6,1.5);
+  const up=L.w==='a'?29:71, dn=100-up;
+  const w=x=>Math.pow(x/100,.42);
+  const hurt=L.w==='a'?'b':'a';
+  const trouble=clamp(1-lvOdds(hurt,n)/55,0,1);
+  const base=2600*size*spec, j=()=>.85+Math.random()*.3;
+  return {fire:Math.round(base*w(up)*1.25*j()),
+          smug:Math.round(base*w(dn)*(0.45+0.75*trouble)*j())};
+}
+function lvOdds(side,n){
+  const mine=liveYds(side==='a'?'love':'mahomes',n), other=liveYds(side==='a'?'mahomes':'love',n);
+  const left=1-n/(GAME.clock.length-1), sd=Math.max(5,78*Math.sqrt(left));
+  return clamp(Math.round(100/(1+Math.exp(-1.702*(mine-other)/sd))),1,99);
+}
+function lvRxRow(n){
+  const target=lvSeed(n), row=document.createElement('div');
+  row.className='lvrx';
+  const st={target,shown:{},mine:{},els:{},t0:performance.now()};
+  LVRX.forEach(r=>{
+    st.shown[r.k]=Math.round(target[r.k]*.16); st.mine[r.k]=false;
+    const b=document.createElement('button'); b.type='button';
+    b.innerHTML='<span class="e">'+r.e+'</span><b>'+st.shown[r.k].toLocaleString('en-US')+'</b>';
+    b.onclick=e=>{ e.stopPropagation();
+      st.mine[r.k]=!st.mine[r.k]; b.classList.toggle('on',st.mine[r.k]);
+      const d=st.mine[r.k]?1:-1;
+      st.target[r.k]+=d; st.shown[r.k]+=d;
+      b.querySelector('b').textContent=st.shown[r.k].toLocaleString('en-US');
+      b.classList.remove('pop'); void b.offsetWidth; if(d>0)b.classList.add('pop');
+      if(d>0)lvBump(45); sfxTick(); };
+    st.els[r.k]=b; row.appendChild(b);
+  });
+  lvClimb.push(st);
+  return row;
+}
+/* fast then slow over about ten seconds. A count that lands finished is a number; a count
+   you watch climb is a room. */
+setInterval(()=>{
+  if(!lvClimb.length)return;
+  const now=performance.now();
+  for(let x=lvClimb.length-1;x>=0;x--){
+    const st=lvClimb[x], pr=clamp((now-st.t0)/10000,0,1), e=1-Math.pow(1-pr,2.4);
+    let live=false;
+    LVRX.forEach(r=>{
+      const v=Math.round(st.target[r.k]*(.16+.84*e))+(st.mine[r.k]?1:0);
+      if(v!==st.shown[r.k]){st.shown[r.k]=v;
+        st.els[r.k].querySelector('b').textContent=v.toLocaleString('en-US');live=true;}
+    });
+    if(pr>=1&&!live)lvClimb.splice(x,1);
+  }
+},180);
+
+/* ---------- presence ---------- */
+let lvPres=8200, lvPresT=null;
+function lvBump(n){
+  lvPres+=n; el('lvpresN').textContent=lvPres.toLocaleString('en-US');
+  const d=el('lvpresD'); d.textContent='+'+n.toLocaleString('en-US'); d.classList.add('show');
+  const b=el('lvblip'); b.classList.remove('go'); void b.offsetWidth; b.classList.add('go');
+  clearTimeout(lvBump._t); lvBump._t=setTimeout(()=>d.classList.remove('show'),1400);
+}
+function lvPresStart(){
+  lvPres=8200; el('lvpresN').textContent='8,200'; el('lvpresD').classList.remove('show');
+  clearInterval(lvPresT);
+  lvPresT=setInterval(()=>{ if(!LIVE.on)return;      // it breathes between plays as well
+    lvPres=Math.max(2000,lvPres+Math.round((Math.random()*2-.7)*22));
+    el('lvpresN').textContent=lvPres.toLocaleString('en-US'); },900);
+}
+
 /* One stop, one play. The line carries the clock, a flag if it scored, the play itself,
    and - only when it scored - what the scoreboard became. The room answers underneath. */
 const FLAG={td:'TOUCHDOWN',fg:'FIELD GOAL'};
 function livePush(turned,final){
   const i=LIVE.i, L=GAME.line[i];
   const d=document.createElement('div');
-  d.className='lvline'+(final?' final':turned?' turn':'');
-  const flag=FLAG[L.s]||'';
-  d.innerHTML='<span class="lvt"><span>'+GAME.clock[i]+'</span>'+
-              (flag?'<span class="lvflag">'+flag+'</span>':'')+'</span>'+
-              (turned?'<i>&#9650;</i> ':'')+L.t+
-              (L.s?'<span class="lvsc">'+scoreLine(i)+'</span>':'');
+  d.className='lvline by-'+L.w+(final?' final':turned?' turn':'');
+  const flag=FLAG[L.s]||'Final';
+  d.innerHTML='<div class="lvt"><span class="lvmeta">'+GAME.clock[i]+
+              ' &#183; <span class="lvflag">'+flag+'</span></span></div>'+
+              '<span class="lvtxt">'+(turned?'&#9650; ':'')+L.t+'</span>';
+  d.querySelector('.lvt').appendChild(lvRxRow(i));
   feedAdd(d);
   // the room answers the play, staggered so it reads as reaction rather than chorus
   ROOM.filter(r=>r.i===i).forEach((r,k)=>{
@@ -3488,6 +3623,8 @@ function livePush(turned,final){
       feedAdd(c);
     }, 620+k*680);
   });
+  // a score moves the room, and a lead change moves it more
+  lvBump(Math.round((L.s==='td'?520:L.s==='fg'?260:110)*(turned?2.1:1)*(0.8+Math.random()*0.5)));
   liveHead(i);
 }
 /* ---------- am I getting it ----------
@@ -3500,8 +3637,8 @@ function livePush(turned,final){
    It is a logistic standing in for the normal, which is accurate to about a point across
    this range and does not need a table. */
 const CARDS_BY_SIDE={
-  LOVE:    {name:'Jordan <b>Love</b>',    pc:'#D9B44A', share:29, tier:'RARE'},
-  MAHOMES: {name:'Patrick <b>Mahomes</b>',pc:'#EC7A62', share:71, tier:'COMMON'},
+  LOVE:    {name:'Jordan <b>Love</b>',    pc:'#D9B44A', tint:'#241C0B', share:29, tier:'RARE'},
+  MAHOMES: {name:'Patrick <b>Mahomes</b>',pc:'#EC7A62', tint:'#2B1611', share:71, tier:'COMMON'},
 };
 function mintOdds(i){
   const la=liveYds('love',i), ma=liveYds('mahomes',i);
@@ -3510,54 +3647,49 @@ function mintOdds(i){
   const sd=Math.max(5,78*Math.sqrt(left));            // yards of swing still available
   return clamp(Math.round(100/(1+Math.exp(-1.702*(mine-theirs)/sd))),1,99);
 }
+/* ---------- WHAT IS ON THE LINE ----------
+   The streak and the card share this slab because they are the two halves of one
+   sentence: what you lose and what you win. The slab wears a tint of your man's colour
+   so it is visibly yours rather than one more card in the feed, and at risk everything
+   goes red at once so the state is readable from the corner of an eye. */
 function cardInit(){
   const C=CARDS_BY_SIDE[S.pick]||CARDS_BY_SIDE.LOVE;
   el('lvcard').style.setProperty('--pc',C.pc);
-  el('lvcName').innerHTML=C.name;
-  el('lvcMeta').innerHTML=C.tier+' &#183; '+C.share+'% of the room';
-  el('lvcPct').textContent='50%'; el('lvcPct').className='lvc-p';
-  el('lvcState').textContent='TO MINT';
+  el('lvcard').style.setProperty('--mytint',C.tint);
+  el('lvcTier').textContent=C.tier;
+  el('lvcStreak').textContent='11'; el('lvcTag').textContent='Holding';
+  el('lvcState').textContent='50% to mint';
+  el('lvcard').classList.remove('risk');
   LIVE.on50=null;
 }
 function cardStep(i,final){
-  const p=mintOdds(i), C=CARDS_BY_SIDE[S.pick]||CARDS_BY_SIDE.LOVE;
-  const pct=el('lvcPct'), st=el('lvcState');
-  if(final){
-    const got=p>=50;
-    pct.textContent=got?C.tier:'GONE'; pct.className='lvc-p'+(got?'':' gone');
-    st.textContent=got?'MINTED':'NOT TONIGHT';
-    return;
-  }
-  pct.textContent=p+'%'; pct.className='lvc-p'+(p<50?' risk':'');
-  st.textContent='TO MINT';
-  // only a CROSSING is worth a line in the feed. A number drifting from 61 to 58 is not
-  // news; going from behind to in front is the only thing that changes what you own.
+  const p=mintOdds(i);
+  el('lvcStreak').textContent = final ? (p>=50?'12':'0') : '11';
+  el('lvcTag').textContent    = final ? (p>=50?'Survived':'Gone') : (p>=50?'Holding':'At risk');
+  el('lvcState').textContent  = final ? (p>=50?'Minted':'Not tonight') : p+'% to mint';
+  el('lvcard').classList.toggle('risk',p<50);
+  /* only a CROSSING is worth a line in the feed. A number drifting from 61 to 58 is not
+     news; going from behind to in front is the only thing that changes what you own. */
   const above=p>=50;
-  if(LIVE.on50!==null&&above!==LIVE.on50){
+  if(!final&&LIVE.on50!==null&&above!==LIVE.on50){
     const d=document.createElement('div');
     d.className='lvyou'+(above?'':' risk');
-    d.innerHTML=above?('Your card is back on. <b>'+p+'% to mint '+C.tier+'</b>')
-                     :('Your card is slipping. <b>'+p+'% to mint '+C.tier+'</b>');
+    d.innerHTML=(above?'Your card is back on &#183; <b>':'Your card is slipping &#183; <b>')+p+'% to mint</b>';
     feedAdd(d);
   }
-  LIVE.on50=above;
-}
-// the leader is lit and the trailer is not, in the header and in every score stamp
-function scoreLine(i){
-  const g=GAME.gb[i], k=GAME.kc[i];
-  return (g>=k?'<b>GB '+g+'</b>':'GB '+g)+' &#183; '+(k>=g?'<b>KC '+k+'</b>':'KC '+k);
+  if(!final)LIVE.on50=above;
 }
 function liveHead(i){
   const g=GAME.gb[i], k=GAME.kc[i];
-  el('lvscore').innerHTML='<b>GB</b> <span class="'+(g>=k?'up':'')+'">'+g+'</span>'+
-    ' <i>&#183;</i> <b>KC</b> <span class="'+(k>=g?'up':'')+'">'+k+'</span>';
+  el('lvGB').textContent=g; el('lvKC').textContent=k;
+  el('lvGB').className=g>=k?'':'dim'; el('lvKC').className=k>=g?'':'dim';
   el('lvq').textContent=GAME.clock[i];
   const w=qAt(i);
   [...el('lvqs').children].forEach((sp,n)=>{
     sp.firstChild.style.width=(n+1<w.q?100:n+1>w.q?0:w.p*100)+'%';});
   const la=liveYds('love',i), ma=liveYds('mahomes',i);
   const mine=S.pick==='LOVE'?la:ma, theirs=S.pick==='LOVE'?ma:la, d2=mine-theirs;
-  el('lvstate').textContent = d2===0?'TIED' : d2>0?`YOU UP ${d2}` : `YOU DOWN ${-d2}`;
+  el('lvstate').textContent = d2===0?'Level' : d2>0?`You up ${d2}` : `You down ${-d2}`;
   cardStep(i, i===GAME.clock.length-1);
 }
 
@@ -3663,12 +3795,11 @@ function enterLive(){
   jumbo={...JUMBO0};
   LIVE.on=true; LIVE.i=-1; LIVE.lead=null; LIVE.shown=-1;
   S.phase='live'; el('lvfeed').innerHTML='';
-  const meA=S.pick==='LOVE';
-  el('lvsA').textContent='LOVE 29%'+(meA?' · YOU':'');
-  el('lvsB').textContent='MAHOMES 71%'+(meA?'':' · YOU');
   el('lvqs').innerHTML='<span><i></i></span>'.repeat(4);
-  el('lvscore').innerHTML='<b>GB</b> <span>0</span> <i>&#183;</i> <b>KC</b> <span>0</span>';
-  el('lvq').textContent='Q1 15:00'; el('lvstate').textContent='TIED';
+  el('lvGB').textContent='0'; el('lvKC').textContent='0';
+  el('lvGB').className=''; el('lvKC').className='';
+  el('lvq').textContent='Q1 15:00'; el('lvstate').textContent='Level';
+  lvClimb.length=0; lvPresStart();
   cardInit(); sayInit();
   el('lvwrap').classList.add('on'); el('phone').classList.add('live');
   liveStep();
@@ -3707,7 +3838,7 @@ el('backbtn').onclick=()=>{
 /* Running it back has to tear the GAME down too, not just the board. The stop timer
    is the one thing in here that keeps running on its own, so a replay started while a
    game was live used to leave the old one ticking underneath the new pick. */
-function stopLive(){ clearInterval(LIVE.timer); LIVE.on=false; LIVE.i=-1;
+function stopLive(){ clearInterval(LIVE.timer); clearInterval(lvPresT); LIVE.on=false; LIVE.i=-1;
   el('lvfeed').innerHTML=''; el('lvwrap').classList.remove('on');
   el('phone').classList.remove('live'); }
 el('replay').onclick=()=>{stopLive();SWOOP_FROM=null;
@@ -4402,6 +4533,9 @@ function frame(){
   // the top chrome yields the edges to the pick slabs, stays out of the stamp's way,
   // and comes back for the verdict on the board
   el('top').style.opacity=(stampUp?0:1-S.pickIn).toFixed(2);
+  /* the corner chip and the stakes panel were both saying eleven. During a game the
+     panel is the one that means something, so the chip stands down for the duration. */
+  el('top').classList.toggle('inplay',S.phase==='live');
   updateCopy();fileFrame();lvFrame();requestAnimationFrame(frame);
 }
 /* ---------- THE COLLECTION: build + handling ----------
