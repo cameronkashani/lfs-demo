@@ -3115,9 +3115,9 @@ function drawStamp(){
      and it used to sit still for about a fifth of a second before the swoop tore it away,
      which is long enough to register that something orange happened and not long enough to
      read your own man's name on it. The hold is more than doubled and the exit is later. */
-  if(S.stamped||!(S.phase==='swoop'||S.phase==='done')||!S.pick||S.swoop>=.82)return;
-  const hold=.48, prog=S.swoop;
-  const off=prog<hold?0:easeOut((prog-hold)/(.82-hold))*H*1.35;
+  if(S.stamped||!(S.phase==='swoop'||S.phase==='done')||!S.pick||S.swoop>=.90)return;
+  const hold=.62, prog=S.swoop;
+  const off=prog<hold?0:easeOut((prog-hold)/(.90-hold))*H*1.35;
   ctx.save();ctx.translate(0,-off);
   ctx.fillStyle='#FF5A1E';ctx.fillRect(0,-H*.5,W,H*1.5);
   ctx.fillStyle='rgba(11,7,5,.08)';
@@ -3490,13 +3490,13 @@ function runStakes(){
      less than a second before the crane dropped, which is not long enough to read four
      numbers, let alone think about them. The numbers also count more slowly now: a
      number you can watch arrive is worth more than one that snaps. */
-  setTimeout(()=>{sfxJumbo(0);countTo('crowd',CROWD_M,1700);},2500);
-  setTimeout(()=>{sfxJumbo(1);countTo('surv',54,1700);},4500);
-  setTimeout(()=>{sfxJumbo(2);countTo('rare',1,500);},6100);
-  setTimeout(()=>{sfxJumbo(3);countTo('streak',11,1200);},6900);
+  setTimeout(()=>{sfxJumbo(0);countTo('crowd',CROWD_M,1700);},2900);
+  setTimeout(()=>{sfxJumbo(1);countTo('surv',54,1700);},4900);
+  setTimeout(()=>{sfxJumbo(2);countTo('rare',1,500);},6500);
+  setTimeout(()=>{sfxJumbo(3);countTo('streak',11,1200);},7300);
   // spend the stamp and drop the crane. The frame handler enters the game the moment
   // the camera is back on the men, so the kickoff is the landing rather than a cut.
-  setTimeout(()=>{S.stamped=true;S.swoopDir=-1;},10200);
+  setTimeout(()=>{S.stamped=true;S.swoopDir=-1;},10600);
 }
 
 /* ---------- saying something ----------
@@ -4406,11 +4406,11 @@ function frame(){
      in. Descending faster than it climbed is deliberate: the climb is a reveal and the
      drop is a return, and a return that takes as long as a reveal reads as a second one. */
   if(S.phase==='swoop'||S.phase==='done'){
-    /* .44 up, not .60. The climb is the frame the STAMP lives on, so its speed is how
-       long you get to read your own pick. At .60 the whole thing was over in 1.7 seconds
+    /* .40 up, not .60. The climb is the frame the STAMP lives on, so its speed is how
+       long you get to read your own pick, and it holds STILL for the first .62 of it. At .60 the whole thing was over in 1.7 seconds
        and the stamp was gone inside 1.2 of them. The drop keeps its old pace: a return
        that takes as long as a reveal reads as a second reveal. */
-    S.swoop=clamp(S.swoop+dt*(S.swoopDir>0?.44:1.05)*S.swoopDir,0,1);
+    S.swoop=clamp(S.swoop+dt*(S.swoopDir>0?.40:1.05)*S.swoopDir,0,1);
     if(S.swoopDir<0&&S.swoop<=0){S.swoopDir=1;enterLive();}
     const k=ease(S.swoop),a=SWOOP_FROM||BEATS[MAXT],b=JUMBO_CAM;
     camT={cx:lerp(a.cx,b.cx,k),cy:lerp(a.cy,b.cy,k),cz:lerp(a.cz,b.cz,k),zoom:lerp(a.zoom,b.zoom,k),tilt:lerp(a.tilt,b.tilt,k),yaw:lerp(a.yaw,b.yaw,k)};
@@ -4583,7 +4583,7 @@ function frame(){
   // the pick slabs claim the top and bottom EDGES of the frame, and the stamp is full
   // bleed. Mahomes' slab grows up from the bottom edge, so a nav sitting on it cuts the
   // one gesture the whole product exists for off at the ankles.
-  const stampUp=!S.stamped&&(S.phase==='swoop'||S.phase==='done')&&S.swoop<.72;
+  const stampUp=!S.stamped&&(S.phase==='swoop'||S.phase==='done')&&S.swoop<.82;
   // the nav offers a way out of a game that is already running, and the tab rail offers
   // a scrub that no longer does anything. Both are gone for the duration.
   const navA=(stampUp||S.phase==='live')?0:1-S.pickIn;
