@@ -184,11 +184,15 @@ body{background:#050403;color:var(--t1);font-family:'IBM Plex Mono',monospace;
   background:var(--g2)}
 
 /* ---------- what is on the line ---------- */
+/* IT IS NOT ANOTHER CARD IN THE FEED. Sharing a surface with the plays made the one
+   panel that is about YOU look like one more thing that happened. It takes a tint of
+   your man's colour instead, so it belongs to you at a glance and separates cleanly
+   from the neutral cards below it. */
 .stakes{flex-shrink:0;display:flex;align-items:center;gap:14px;
-  padding:11px 14px 12px 12px;background:var(--g3);
+  padding:11px 14px 12px 12px;background:var(--mytint);
   border-left:3px solid var(--mypc);
   transition:background .4s ease,border-color .4s ease}
-.stakes.risk{background:#241209;border-left-color:var(--risk)}
+.stakes.risk{background:#2C1109;border-left-color:var(--risk)}
 .st-l{flex:1;min-width:0}
 .st-l .k{display:block;font-size:10px;letter-spacing:.2em;text-transform:uppercase;
   color:var(--t3);margin-bottom:3px}
@@ -214,7 +218,7 @@ body{background:#050403;color:var(--t1);font-family:'IBM Plex Mono',monospace;
    The reason to build this page standalone was to put the game and the room front
    and centre, so this gets every pixel the rest does not need. */
 .feed{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;
-  display:flex;flex-direction:column;gap:10px;padding:12px 0 6px;scrollbar-width:none;
+  display:flex;flex-direction:column;gap:8px;padding:12px 0 6px;scrollbar-width:none;
   -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 18px);
   mask-image:linear-gradient(180deg,transparent 0,#000 18px)}
 .feed::-webkit-scrollbar{display:none}
@@ -224,15 +228,26 @@ body{background:#050403;color:var(--t1);font-family:'IBM Plex Mono',monospace;
    five percent bone over near black before, which is not a step, it is a rumour.
    The rule down its left is the colour of the man who made the play, so the feed
    can be scanned for whose night it is without reading a word. */
-.play{flex-shrink:0;background:var(--g3);padding:10px 13px 11px;
+/* THE REACTIONS COST A WHOLE ROW. Sitting on their own line under the text they added
+   about a third to the height of every card, and thirteen cards of that is most of a
+   screen. They belong beside the line they are reacting to, not beneath it: the text
+   takes the width it needs and the chips hang off the end of it. */
+.play{flex-shrink:0;background:var(--g3);padding:8px 12px 9px;
   border-left:3px solid var(--pcA);
   animation:in .4s cubic-bezier(.2,1.25,.35,1) both}
+/* THE CHIPS GO IN THE META ROW. Beside the text they stole enough width to wrap it, and
+   two lines cost more than the row ever saved. The meta row was mostly empty air, and a
+   card only needs two rows: what and when on top, what happened underneath. */
+.play .body{margin-top:4px}
+.play .body .txt{margin-top:0}
 .play.by-b{border-left-color:var(--pcB)}
-.play .stamp{display:flex;justify-content:space-between;align-items:baseline;
-  font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--t3)}
+.play .stamp{display:flex;justify-content:space-between;align-items:center;gap:10px;
+  font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--t3);
+  min-height:24px}
+.play .meta{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .play .flag{color:var(--t1)}
 .play .txt{display:block;font-family:'Barlow Condensed',sans-serif;font-weight:600;
-  font-size:17px;line-height:1.24;letter-spacing:.005em;color:var(--t1);margin-top:5px}
+  font-size:17px;line-height:1.22;letter-spacing:.005em;color:var(--t1)}
 /* the lead change is the only inverted card in the run, because it is the only one
    that changes what the night is worth */
 .play.turn{background:var(--t1);border-left-color:#C23A18}
@@ -240,15 +255,15 @@ body{background:#050403;color:var(--t1);font-family:'IBM Plex Mono',monospace;
 .play.turn .flag{color:#0B0907}
 .play.turn .txt{color:#0B0907;font-weight:700}
 
-.rx{display:flex;gap:6px;margin-top:9px;justify-content:flex-end}
-.rx button{flex:0 0 auto;min-width:62px;display:flex;align-items:center;justify-content:center;
-  gap:7px;background:rgba(242,233,212,.06);border:1px solid #2F281E;
-  padding:5px 10px 6px;cursor:pointer;line-height:1;
+.rx{flex-shrink:0;display:flex;gap:5px}
+.rx button{flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+  gap:5px;background:rgba(242,233,212,.06);border:1px solid #2F281E;
+  padding:4px 8px 5px;cursor:pointer;line-height:1;
   transition:background .16s ease,border-color .16s ease,transform .12s ease}
 .play.turn .rx button{background:rgba(11,9,7,.07);border-color:rgba(11,9,7,.2)}
-.rx .e{font-size:15px;line-height:1;
+.rx .e{font-size:13px;line-height:1;
   font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif}
-.rx b{font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:11px;
+.rx b{font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:10px;
   font-variant-numeric:tabular-nums;color:var(--t2)}
 .play.turn .rx b{color:rgba(11,9,7,.6)}
 .rx button.on{background:rgba(255,90,30,.18);border-color:var(--flare)}
@@ -287,7 +302,7 @@ body{background:#050403;color:var(--t1);font-family:'IBM Plex Mono',monospace;
 .pres .d.show{opacity:1}
 
 .say{flex-shrink:0;display:flex;align-items:center;gap:11px;margin-top:10px;
-  padding:9px 10px 9px 12px;background:var(--g3);border-left:3px solid var(--mypc)}
+  padding:9px 10px 9px 12px;background:var(--mytint);border-left:3px solid var(--mypc)}
 .say .dot{width:7px;height:7px;border-radius:50%;background:var(--mypc);flex-shrink:0}
 .say input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:var(--t1);
   font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:17px;padding:4px 0}
@@ -407,8 +422,8 @@ const ROOM=[
   {i:11,s:'b',who:'@ksclock',t:'Two points and seventy four seconds. It is Mahomes.'},
   {i:12,s:'a',who:'@northgate',t:'The kid stood up. That is the whole story.'},
 ];
-const SIDE={LOVE:{pc:'#D9B44A',share:29,tier:'RARE',k:'love',w:'a'},
-            MAHOMES:{pc:'#EC7A62',share:71,tier:'COMMON',k:'mahomes',w:'b'}};
+const SIDE={LOVE:   {pc:'#D9B44A',tint:'#241C0B',share:29,tier:'RARE',  k:'love',   w:'a'},
+            MAHOMES:{pc:'#EC7A62',tint:'#2B1611',share:71,tier:'COMMON',k:'mahomes',w:'b'}};
 const STOP=2600, STREAK=11, LAST=GAME.clock.length-1;
 let PICK='LOVE', i=-1, timer=null, on50=null, seen=[], pres=8200;
 
@@ -518,6 +533,7 @@ function add(node,forced){const f=el('feed'),go=forced||follow();
 function setSide(p){
   PICK=p; const S=SIDE[p];
   document.documentElement.style.setProperty('--mypc',S.pc);
+  document.documentElement.style.setProperty('--mytint',S.tint);
   el('sideA').classList.toggle('on',p==='LOVE');
   el('sideB').classList.toggle('on',p==='MAHOMES');
   el('manA').classList.toggle('mine',p==='LOVE');
@@ -570,11 +586,10 @@ function step(){
   const d=document.createElement('div');
   d.className='play by-'+L.w+(turned?' turn':'');
   const flag=L.s==='td'?'Touchdown':L.s==='fg'?'Field goal':'Final';
-  d.innerHTML='<div class="stamp"><span>'+GAME.clock[i]+'</span>'+
-              (flag?'<span class="flag">'+flag+'</span>':'')+'</div>'+
-              '<span class="txt">'+(turned?'\u25B2 ':'')+L.t+'</span>'+
-              '';
-  d.appendChild(rxRow(i));
+  d.innerHTML='<div class="stamp"><span class="meta">'+GAME.clock[i]+
+              (flag?' &#183; <span class="flag">'+flag+'</span>':'')+'</span></div>'+
+              '<div class="body"><span class="txt">'+(turned?'\u25B2 ':'')+L.t+'</span></div>';
+  d.querySelector('.stamp').appendChild(rxRow(i));
   add(d);
 
   // a score moves the room, and a lead change moves it more
