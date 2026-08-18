@@ -505,6 +505,30 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;image-rend
 .lvs-a{color:#D9B44A}
 .lvs-b{color:#EC7A62}
 
+/* ---------- the composer ----------
+   The room talks all game and until now you could only read it. It sits at the very
+   bottom because that is where a thumb already is, and it wears the same dot the room
+   wears - in YOUR man's colour - so your line lands in the feed looking like one of
+   theirs rather than like a system message about you. */
+.lvsay{display:flex;align-items:center;gap:calc(9px * var(--g));flex-shrink:0;
+  margin-top:calc(8px * var(--g));padding-top:calc(8px * var(--g));
+  border-top:1px solid rgba(237,228,207,.14)}
+.lvsay-dot{flex-shrink:0;width:calc(6px * var(--g));height:calc(6px * var(--g));
+  border-radius:50%;background:var(--mypc,#D9B44A)}
+.lvsay input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:#EDE4CF;
+  font-family:'Barlow Condensed',sans-serif;font-weight:600;
+  font-size:calc(15px * var(--g));line-height:1.2;padding:calc(3px * var(--g)) 0}
+.lvsay input::placeholder{color:rgba(237,228,207,.32);font-weight:600}
+.lvsay button{flex-shrink:0;font-family:'IBM Plex Mono',monospace;
+  font-size:calc(8.5px * var(--u));letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(237,228,207,.4);background:transparent;
+  border:1px solid rgba(237,228,207,.18);border-left-width:calc(2px * var(--g));
+  padding:calc(7px * var(--u)) calc(11px * var(--u));cursor:pointer;
+  transition:color .2s ease,border-color .2s ease}
+/* it only lights up when there is something to send */
+.lvsay.armed button{color:var(--flare);border-color:rgba(255,90,30,.7)}
+.lvcom.me .who{color:#EDE4CF}
+
 @keyframes lvin{from{opacity:0;transform:translateY(calc(9px * var(--g)))}
   to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.lvline,.lvcom{animation:none}}
@@ -1300,6 +1324,11 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;image-rend
       <span class="lvs-a" id="lvsA">LOVE 29%</span>
       <span class="lvs-b" id="lvsB">MAHOMES 71%</span>
     </div>
+    <form class="lvsay" id="lvsay" autocomplete="off">
+      <span class="lvsay-dot" id="lvsayDot"></span>
+      <input id="lvsayIn" type="text" maxlength="120" placeholder="Say something">
+      <button type="submit" id="lvsayBtn">Post</button>
+    </form>
   </div>
   <div class="hint" id="hint">Swipe →</div>
   <div class="ticks" id="ticks"></div>
@@ -2931,11 +2960,10 @@ function drawLiveUI(){
   if(!LIVE.on||LIVE.i<0)return;
   const P=v=>Math.round(v*DPR)/DPR, k=Math.min(W,H*.52)/390;
   const i=LIVE.i, prev=Math.max(i-1,0);
-  /* THE YARDS ARRIVE WHEN THE BALL DOES. They used to start easing the instant the stop
+  /* THE YARDS ARRIVE ON THE RELEASE. They used to start easing the instant the stop
      fired, so the bar had finished moving while the man was still winding up: the number
-     was the cause and the throw was decoration. Now the fill starts on the catch, which
-     makes the ball the thing that delivers them. */
-  const el2=(performance.now()-LIVE.t)/1000, land=PLAY.rel+PLAY.fly;
+     was the cause and the throw was decoration. Now nothing moves until he lets go. */
+  const el2=(performance.now()-LIVE.t)/1000, land=PLAY.rel;
   const a=clamp((el2-land)/0.55,0,1), e=easeOut(a);
   const val=key=>lerp(i===0?0:liveYds(key,prev),liveYds(key,i),e);
   const la=val('love'), ma=val('mahomes');
@@ -2968,11 +2996,9 @@ function drawLiveUI(){
       slab(cx-bw*.5,cx-bw*.5+w);
       ctx.fillStyle=mine?'#FF5A1E':'rgba(237,228,207,.30)'; ctx.fill();
       ctx.restore(); }
-    /* THE CATCH. The ball leaves the top of the frame and the yards start moving at the
-       same instant, and without something joining them they are two coincidences. A short
-       bloom at the head of the fill is that join: it is the ball landing, on the only
-       part of the screen that was ever going to record it. */
-    const catchU=(el2-(PLAY.rel+PLAY.fly))/0.42;
+    /* THE GAIN. A short bloom at the head of the fill on release, so the throw and the
+       number are one event rather than two things that happen near each other. */
+    const catchU=(el2-PLAY.rel)/0.42;
     if(isThrower&&catchU>=0&&catchU<=1){
       const hx=cx-bw*.5+w, g2=ctx.createRadialGradient(hx,(y0+y1)*.5,0,hx,(y0+y1)*.5,bh*2.6);
       const al=(1-catchU)*(mine?.85:.5);
@@ -2983,77 +3009,13 @@ function drawLiveUI(){
   };
   lane(AX,la,'LOVE',mineIsA,LIVE.who==='a');
   lane(BX,ma,'MAHOMES',!mineIsA,LIVE.who==='b');
-  drawBall(el2,k,P);
 }
 
-/* ---------- the ball ----------
-   No receiver: there is no room for one and no reason to invent one. What was missing was
-   never a second man, it was the ball ever LEAVING the first. So it goes downfield, which
-   is where a pass goes, and it does it in WORLD space rather than screen space: the same
-   projection that draws the men carries it away from camera, so it shrinks as it travels
-   and the throw reads as depth instead of as a dot sliding across glass.
-
-   The launch point is derived from the art, not tuned by eye. The sprite is drawn centred
-   on the man's feet at a known height, so a fraction across its own box converts back into
-   a world offset exactly, and the ball leaves the hand that is drawn holding it.
-
-   The yards land when the ball does. That is the only reason the flight has a duration. */
-function handWorld(who,img,nf){
-  const H0=HAND[who], asp=(img.width/nf)/img.height;
-  return {dx:(H0.x-0.5)*PH*asp, y:PH*(1-H0.y)};
-}
-function drawBall(el2,k,P){
-  const u=(el2-PLAY.rel)/PLAY.fly;
-  if(u<0||u>1)return;
-  const who=LIVE.who, wx=who==='a'?AX:BX;
-  const img=who==='a'?IMG.aSeq:IMG.bThrow, nf=who==='a'?SEQ.aSeq.frames:1;
-  if(!img||!img.width)return;
-  const h0=handWorld(who,img,nf);
-  // out, up and away: a completed pass, not a punt. The far point is off the top of the
-  // field, so the ball leaves the world rather than stopping in it.
-  /* RECESSION FIGHTS TRAVEL. The first pass at this sent the ball twenty six yards
-     downfield, and because the projection shrinks x toward the centre as z grows, it
-     crossed almost no screen distance: it sat by his helmet and got smaller, which reads
-     as a ball being deleted rather than thrown. Depth is worth having but it cannot be
-     the whole move, so the recession is small and the ball is thrown ACROSS.
-
-     Twenty world units looks absurd written down and is not: SPREAD compresses x by a
-     factor of seven, so anything less than that never reaches the edge of the frame, and
-     a ball that stops in the middle of the sky is a ball that was deleted. It leaves. */
-  const e=u*u*(3-2*u);
-  const px=lerp(wx+h0.dx, wx+h0.dx+20, e);
-  const pz=lerp(PZ, PZ+6, e);
-  const py=lerp(h0.y, 3.2, e);
-  const q=proj(px,py,pz); if(!q.vis)return;
-  // the arc lives in screen space so it reads the same at any camera height
-  const kind=(GAME.line[LIVE.i]||{}).s;
-  const lift=Math.sin(Math.PI*u)*(kind==='td'?58:kind==='fg'?48:42)*k;
-  const x=q.x, y=q.y-lift;
-  /* CONTRAST, NOT REALISM. A leather brown football against a night sky at fourteen
-     pixels is invisible - I lost it twice on screen before ringing it in green to prove
-     it was being drawn at all. So it carries a bone rim light, which is what the stadium
-     lamps would put on it anyway, and that is what makes it findable in one glance. */
-  const r=Math.max(PH*q.s*SPREAD*0.058,2.8);
-  ctx.save();
-  ctx.globalAlpha=clamp((1-u)/0.18,0,1);       // it leaves the frame rather than stopping
-  ctx.translate(P(x),P(y));
-  ctx.rotate(-0.8+u*3.6);
-  ctx.fillStyle='#A86A32';
-  ctx.beginPath();ctx.ellipse(0,0,r*1.5,r,0,0,7);ctx.fill();
-  ctx.strokeStyle='rgba(237,228,207,.85)';ctx.lineWidth=Math.max(r*.20,1.2);ctx.stroke();
-  ctx.fillStyle='#EDE4CF';ctx.fillRect(-r*.46,-r*.16,r*.92,r*.32);
-  ctx.restore();
-  // a short trail, so a ball this small still reads as travelling
-  ctx.save();ctx.globalAlpha=.22*clamp((1-u)/0.18,0,1);ctx.fillStyle='#EDE4CF';
-  for(let n=1;n<=3;n++){
-    const un=Math.max(u-n*0.06,0), en=un*un*(3-2*un);
-    const qn=proj(lerp(wx+h0.dx,wx+h0.dx+20,en),lerp(h0.y,3.2,en),lerp(PZ,PZ+6,en));
-    if(!qn.vis)continue;
-    const ln=Math.sin(Math.PI*un)*(kind==='td'?58:kind==='fg'?48:42)*k;
-    ctx.beginPath();ctx.arc(P(qn.x),P(qn.y-ln),Math.max(r*(0.42-n*0.1),0.6),0,7);ctx.fill();
-  }
-  ctx.restore();
-}
+/* THE BALL IS GONE ON PURPOSE. A thrown football at this size is fourteen pixels of
+   brown against a night sky: it needed a bone rim light to be findable at all, and by
+   the time it was findable it read as a prop being dragged across the frame rather than
+   a pass. The motion carries it. He winds up, he releases, and the yards move - which is
+   the only part of a pass this screen was ever able to show honestly. */
 
 /* the slam: the instant of commitment, held for a breath, then torn away upward
    by the swoop. The only full-bleed accent flood in the product. */
@@ -3196,14 +3158,9 @@ const THROW_RATE=1.85;   // windup units per second. a full 0..1 throw takes ~0.
    Every beat of a live stop is read off this, so the windup, the release, the ball's
    flight and the bar's fill can never disagree with each other. Seconds from the top of
    the stop; the stop interval is 2.4s, so the whole play lands with room to spare. */
-const PLAY={wind:0.55, hold:0.60, fall:0.34, rel:0.56, fly:0.66};
+const PLAY={wind:0.55, hold:0.62, fall:0.36, rel:0.56};
 const COCK_B=0.86;       // where Mahomes' dropback hands over to the cocked pose
-/* Where the ball sits in the release frame, as a fraction of the sprite's own box. Read
-   off the art, not guessed: Love's is frame 15 of his sequence, Mahomes' is his throw
-   pose. Anchoring the launch to the hand is what stops the ball being a dot that appears
-   near a man rather than a ball he let go of. */
-const HAND={a:{x:0.115,y:0.065}, b:{x:0.095,y:0.090}};
-const LASTSPR={a:null,b:null};
+
 const MAXT=BEATS.length-1;
 const ticksEl=el('ticks');
 for(let i=0;i<BEATS.length;i++){const d=document.createElement('div');d.className='tick';d.innerHTML='<i></i>';ticksEl.appendChild(d);}
@@ -3415,6 +3372,42 @@ function runStakes(){
   // the camera is back on the men, so the kickoff is the landing rather than a cut.
   setTimeout(()=>{S.stamped=true;S.swoopDir=-1;},6400);
 }
+
+/* ---------- saying something ----------
+   Your line is a comment like any other, on your own side, in your man's colour. It is
+   NOT given a special slab or a badge: the moment the app singles your voice out it stops
+   being a room and starts being a form you filled in.
+
+   The feed always follows a line you posted, even if you had scrolled back to re-read
+   something. That is the one case where yanking the view forward is correct: you just
+   spoke, and a message you cannot see landing is a message you assume failed. */
+const sayEl=()=>({form:el('lvsay'),input:el('lvsayIn'),btn:el('lvsayBtn'),dot:el('lvsayDot')});
+function sayArm(){ const S2=sayEl();
+  S2.form.classList.toggle('armed', S2.input.value.trim().length>0); }
+function sayInit(){
+  const S2=sayEl(), C=CARDS_BY_SIDE[S.pick]||CARDS_BY_SIDE.LOVE;
+  S2.form.style.setProperty('--mypc',C.pc);
+  S2.input.value=''; sayArm();
+}
+function saySend(){
+  const S2=sayEl(), t=S2.input.value.trim();
+  if(!t)return;
+  const side=S.pick==='LOVE'?'a':'b';
+  const c=document.createElement('div');
+  c.className='lvcom me s'+side;
+  c.innerHTML='<span class="dot"></span><span class="who">@you</span>'+
+              '<span class="txt"></span>';
+  c.querySelector('.txt').textContent=t;      // it is typed by a person, never parsed as markup
+  el('lvfeed').appendChild(c);
+  el('lvfeed').scrollTop=el('lvfeed').scrollHeight;   // you always see your own line land
+  S2.input.value=''; sayArm(); sfxTick();
+}
+el('lvsay').addEventListener('submit',e=>{e.preventDefault();saySend();});
+el('lvsayIn').addEventListener('input',sayArm);
+// the field is inside the surface that scrubs beats and hand-scrolls the feed; neither
+// of those may start because a thumb landed on a text box
+['touchstart','touchmove','touchend','mousedown','pointerdown'].forEach(ev=>
+  el('lvsay').addEventListener(ev,e=>e.stopPropagation()));
 
 /* The feed keeps everything and scrolls. It follows the newest line ONLY while you are
    already at the bottom: scroll back to re-read something and the game must not yank you
@@ -3654,7 +3647,7 @@ function enterLive(){
   el('lvqs').innerHTML='<span><i></i></span>'.repeat(4);
   el('lvscore').innerHTML='<b>GB</b> <span>0</span> <i>&#183;</i> <b>KC</b> <span>0</span>';
   el('lvq').textContent='Q1 15:00'; el('lvstate').textContent='TIED';
-  cardInit();
+  cardInit(); sayInit();
   el('lvwrap').classList.add('on'); el('phone').classList.add('live');
   liveStep();
   LIVE.timer=setInterval(liveStep,2400);
@@ -4310,8 +4303,6 @@ function frame(){
      the near one. Sort every frame: it costs two subtractions and it is the difference
      between depth and a mistake. */
   if(camXZ(AX,PZ).ez>camXZ(BX,PZ).ez){putA();putB();}else{putB();putA();}
-  // the ball launches from a HAND, and a hand is only knowable once the man is placed
-  LASTSPR.a=ga2||ga1; LASTSPR.b=gb2||gb1;
   drawWeather(dt,true);              // near air, in front of them
   drawScrim();                       // scrim goes UNDER the plates now, not over them
   drawVig();                         // and so does the vignette, for the same reason
