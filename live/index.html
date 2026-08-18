@@ -237,37 +237,35 @@ body{background:#0A0908;color:var(--bone);
 .play.turn .sc b{color:#0B0705}
 
 /* ---------- 1. ONE TAP ----------
-   The first pass gave every play three emotions - GET IN, NO WAY, BRUTAL - and they were
-   generic feelings bolted onto a betting screen. A tap has to MEAN something here, and the
-   only thing worth saying in a room split two ways is which side you are shouting for.
+   Two dead ends got us here. First three generic emotions, which were feelings bolted
+   onto a betting screen. Then a noise tap per man, which put a player's name on a button
+   and so read as a vote - and the vote is over, that is the whole point of the live page.
 
-   So the tap is noise for your man. The other side's count sits beside it as a readout,
-   because you cannot cheer the man you faded and a button that lets you would be nonsense.
-   Whichever side is louder on the play gets full colour; the other dims. And because
-   nobody can change a pick after kickoff, the noise is the ONE crowd number that can
-   honestly move all night. */
-.noise{display:flex;align-items:stretch;gap:8px;margin-top:9px;padding-top:8px;
+   The verb was wrong both times. People in a live room want to TALK, and the barrier is
+   typing. So a tap is a line you say. It posts under your handle, and because everyone
+   else is saying the same handful of things, identical lines collapse into one row with a
+   count. That makes a single element do both jobs at once: it is a comment, and the
+   number beside it is the crowd. Nothing on screen asks you to vote for anything. */
+.qr{display:flex;gap:7px;margin-top:9px;padding-top:8px;
   border-top:1px solid rgba(237,228,207,.10)}
-.play.turn .noise{border-top-color:rgba(11,7,5,.16)}
-.noise .k{flex-shrink:0;align-self:center;font-size:7px;letter-spacing:.24em;
-  text-transform:uppercase;color:rgba(237,228,207,.3)}
-.play.turn .noise .k{color:rgba(11,7,5,.4)}
-.noise .sides{flex:1;display:flex;gap:8px;justify-content:flex-end;align-items:center}
-.nb{display:flex;align-items:baseline;gap:6px;font-family:'IBM Plex Mono',monospace;
-  font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;
-  padding:6px 10px;border:1px solid transparent;background:transparent;
-  transition:opacity .3s ease,background .18s ease,border-color .18s ease}
-.nb b{font-weight:400;font-size:11px;font-variant-numeric:tabular-nums}
-.nb.quiet{opacity:.42}
-.nb.a{color:var(--pcA)} .nb.b{color:var(--pcB)}
-/* yours is a button; theirs is the room reported back to you. The two have to be
-   distinguishable at a glance or the readout reads as a control that ignores you. */
-button.nb{cursor:pointer;border-color:rgba(237,228,207,.32);
-  background:rgba(237,228,207,.05)}
-.play.turn button.nb{border-color:rgba(11,7,5,.3);background:rgba(11,7,5,.05)}
-button.nb.on{color:var(--ink);border-color:var(--mypc)}
-button.nb.on{background:var(--mypc)}
-button.nb.on b{color:var(--ink)}
+.play.turn .qr{border-top-color:rgba(11,7,5,.16)}
+.qr button{flex:1;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:14px;
+  letter-spacing:.01em;color:rgba(237,228,207,.72);
+  background:rgba(237,228,207,.05);border:1px solid rgba(237,228,207,.2);
+  padding:7px 6px 8px;cursor:pointer;
+  clip-path:polygon(0 0,100% 0,calc(100% - 5px) 100%,0 100%);
+  transition:color .16s ease,background .16s ease,border-color .16s ease}
+.play.turn .qr button{color:rgba(11,7,5,.7);background:rgba(11,7,5,.05);
+  border-color:rgba(11,7,5,.22)}
+.qr button:disabled{opacity:.32;cursor:default}
+.qr button.said{color:var(--ink);background:var(--mypc);border-color:var(--mypc)}
+
+/* a line the room is saying together. Same shape as a single voice, because it IS one:
+   it just happens to be one a lot of people are saying at the same time. */
+.said-n{flex-shrink:0;font-variant-numeric:tabular-nums;color:rgba(237,228,207,.42);
+  font-size:8.5px;letter-spacing:.1em}
+.cmt.chorus .who{font-size:8.5px;letter-spacing:.1em}
+.cmt.mine .who{color:var(--bone)}
 
 .cmt{flex-shrink:0;display:flex;gap:8px;align-items:baseline;padding-left:13px;
   animation:in .42s cubic-bezier(.2,1.25,.35,1) both}
@@ -387,7 +385,7 @@ button.nb.on b{color:var(--ink)}
         <span class="picks"><span class="a" id="splitA">LOVE 29%</span><span class="b" id="splitB">MAHOMES 71%</span></span>
       </div>
       <div class="fr">
-        <span class="fk">The noise</span>
+        <span class="fk">Talking</span>
         <span class="nbar"><i class="na" id="nbarA" style="width:50%"></i><i class="nb2" id="nbarB" style="width:50%"></i></span>
         <span class="nnum" id="nnum"><b>50</b> / 50</span>
       </div>
@@ -473,87 +471,117 @@ function qAt(n){const c=GAME.clock[n];
   const m=c.match(/Q(\d) (\d+):(\d+)/);
   return{q:+m[1],p:clamp(1-((+m[2])+(+m[3])/60)/15,0,1)};}
 
-/* ---------- the noise ----------
-   How loud each side gets on a play. Two things drive it: how big the play was for that
-   man, and how many people are on his side. But the crowd size is taken to a fractional
-   power rather than used flat, because a small crowd is not a quiet one - twenty nine
-   percent who backed the underdog make more noise per head than the seventy one percent
-   who took the obvious side, and that is the most enjoyable thing about being in the
-   minority. The exponent was picked by running the whole night: the noise share starts at
-   17 for Love, crosses at the half, gets pulled back in the third, and Love's side takes
-   it for good in the fourth before Mahomes claws it to a knife edge at the whistle.
-   A constant readout would not have been worth putting on the screen. */
-const NOISE={a:0,b:0};
-function noiseFor(n){
+/* ---------- what the room is saying ----------
+   Two lines are offered per play and which two depends on one thing: did that play help
+   the side YOU took. Nothing here names a player, so nothing here can be mistaken for a
+   vote. Saying it is a toggle, because a line you cannot take back is one people hesitate
+   over.
+
+   Every line in the feed carries a count, whether you said it or not, and the counts climb
+   for about ten seconds after the play - fast then slow, which is what a room reacting
+   actually looks like. The other side's lines arrive on their own, so the trash talk shows
+   up whether you join in or not. */
+const SAY={
+  good:['Called it.','All night.','Keep going.','That is the one.'],
+  bad :['Long game.','Not worried.','Still ours.','Ask me in ten minutes.'],
+};
+const TALK={a:0,b:0};
+const climbing=[];
+function pick2(pool,seed){
+  const x=Math.abs(seed*2654435761)%pool.length, y=(x+1+(seed%(pool.length-1)))%pool.length;
+  return [pool[x],pool[y===x?(x+1)%pool.length:y]];
+}
+/* how many people say a given line: the size of the play, and how many are on that side.
+   A small crowd is not a quiet one, so the side count is taken to a fractional power. */
+function chorusSize(n,side,strong){
   const L=GAME.line[n];
   const size=L.s==='td'?1:L.s==='fg'?.58:.34;
-  const yd=+((L.t.match(/(\d+)\s*yard/)||[0,14])[1]);
-  const spec=clamp(yd/34,.55,1.5);
-  const act=L.w, oth=act==='a'?'b':'a';
-  const wt=k=>Math.pow((k==='a'?SIDE.LOVE.share:SIDE.MAHOMES.share)/100,0.42);
-  const j=()=>.85+Math.random()*.3;
-  const o={};
-  o[act]=Math.round(4200*size*spec*wt(act)*j());
-  o[oth]=Math.round(4200*size*wt(oth)*0.16*j());
-  return o;
+  const share=(side==='a'?SIDE.LOVE.share:SIDE.MAHOMES.share)/100;
+  const j=.85+Math.random()*.3;
+  return Math.round(2400*size*Math.pow(share,.42)*(strong?1.35:.6)*j);
 }
-const climbing=[];
-function noiseRow(n){
-  const target=noiseFor(n), mineSide=SIDE[PICK].w, theirs=mineSide==='a'?'b':'a';
+/* IDENTICAL LINES ARE ONE ROW. The whole idea is that a line and its count are the same
+   object, so saying something the room is already saying has to JOIN it rather than post a
+   second row underneath saying exactly the same words. The registry is keyed per play, and
+   it works in both directions: tap before the room gets there and the room merges into
+   yours a moment later. */
+const CHORUS={};
+function chorus(n,side,line,strong,mineToo){
+  const key=n+'|'+side+'|'+line, had=CHORUS[key];
+  if(had){
+    if(!mineToo)had.saidByRoom=true;
+    if(mineToo&&!had.mine){had.mine=true;had.n+=1;had.shown+=1;
+      TALK[side]+=1;paintChorus(had);talkBar();}
+    return had;
+  }
   const row=document.createElement('div');
-  row.className='noise';
-  row.innerHTML='<span class="k">The noise</span><span class="sides"></span>';
-  const hold=row.querySelector('.sides');
-  const mk=(side,isMine)=>{
-    const e=document.createElement(isMine?'button':'span');
-    if(isMine)e.type='button';
-    e.className='nb '+side;
-    e.innerHTML='<span>\u25B2 '+(side==='a'?'Love':'Mahomes')+'</span><b>0</b>';
-    return e;
-  };
-  // your man first: the thing you can do comes before the thing you can only watch
-  const mineEl=mk(mineSide,true), theirEl=mk(theirs,false);
-  hold.appendChild(mineEl); hold.appendChild(theirEl);
-  const st={target,shown:{a:0,b:0},mine:false,t0:performance.now(),
-            els:{[mineSide]:mineEl,[theirs]:theirEl},row};
-  st.shown[mineSide]=Math.round(target[mineSide]*.16);
-  st.shown[theirs]=Math.round(target[theirs]*.16);
-  mineEl.onclick=()=>{ st.mine=!st.mine;
-    mineEl.classList.toggle('on',st.mine);
-    st.target[mineSide]+=st.mine?1:-1; st.shown[mineSide]+=st.mine?1:-1;
-    NOISE[mineSide]+=st.mine?1:-1;
-    paint(st); noiseBar(); bump(90); };
-  climbing.push(st); paint(st);
-  NOISE.a+=target.a; NOISE.b+=target.b; noiseBar();
-  return row;
+  row.className='cmt chorus '+side+(mineToo?' mine':'');
+  row.innerHTML='<span class="dot"></span><span class="who"></span><span class="t"></span>';
+  row.querySelector('.t').textContent=line;
+  const st={row,side,n:chorusSize(n,side,strong),shown:0,mine:!!mineToo,
+            saidByRoom:!mineToo,t0:performance.now(),line};
+  st.shown=Math.round(st.n*.16);
+  climbing.push(st); paintChorus(st); CHORUS[key]=st;
+  TALK[side]+=st.n; talkBar();
+  return st;
 }
-function paint(st){
-  ['a','b'].forEach(k=>{
-    const e=st.els[k]; if(!e)return;
-    e.querySelector('b').textContent=nf(st.shown[k]);
-    e.classList.toggle('quiet',st.shown[k]<st.shown[k==='a'?'b':'a']);
-  });
+function paintChorus(st){
+  st.row.querySelector('.who').textContent =
+    st.mine ? (st.shown>0?'You and '+nf(st.shown)+' others':'You')
+            : nf(st.shown)+' on '+(st.side==='a'?'Love':'Mahomes');
 }
-function noiseBar(){
-  const t=NOISE.a+NOISE.b; if(!t)return;
-  const pa=Math.round(100*NOISE.a/t);
-  el('nbarA').style.width=pa+'%'; el('nbarB').style.width=(100-pa)+'%';
-  el('nnum').innerHTML=(PICK==='LOVE'?'<b>'+pa+'</b> / '+(100-pa):pa+' / <b>'+(100-pa)+'</b>');
-}
-/* fast then slow, over about ten seconds, then it settles and stays */
 setInterval(()=>{
   const now=performance.now();
   for(let x=climbing.length-1;x>=0;x--){
     const st=climbing[x], pr=clamp((now-st.t0)/10000,0,1), e=1-Math.pow(1-pr,2.4);
-    let live=false;
-    ['a','b'].forEach(k=>{
-      const v=Math.round(st.target[k]*(.16+.84*e))+(st.mine&&k===SIDE[PICK].w?1:0);
-      if(v!==st.shown[k]){st.shown[k]=v;live=true;}
-    });
-    if(live)paint(st);
-    if(pr>=1&&!live)climbing.splice(x,1);
+    const v=Math.round(st.n*(.16+.84*e));
+    if(v!==st.shown){st.shown=v;paintChorus(st);}
+    if(pr>=1)climbing.splice(x,1);
   }
 },180);
+function talkBar(){
+  const t=TALK.a+TALK.b; if(!t)return;
+  const pa=Math.round(100*TALK.a/t);
+  el('nbarA').style.width=pa+'%'; el('nbarB').style.width=(100-pa)+'%';
+  el('nnum').innerHTML=(PICK==='LOVE'?'<b>'+pa+'</b> / '+(100-pa):pa+' / <b>'+(100-pa)+'</b>');
+}
+
+/* the two chips under a play. They are the only thing on the live page you can press. */
+function quickRow(n){
+  const L=GAME.line[n], mineSide=SIDE[PICK].w;
+  const helped = (L.w===mineSide);
+  const lines = pick2(helped?SAY.good:SAY.bad, n+ (helped?7:13));
+  const row=document.createElement('div'); row.className='qr';
+  let saidOne=null;
+  lines.forEach(line=>{
+    const b=document.createElement('button'); b.type='button'; b.textContent=line;
+    b.onclick=()=>{
+      if(saidOne&&saidOne!==b)return;             // one line per play, or it is spam
+      if(b.classList.contains('said')){           // take it back
+        b.classList.remove('said'); saidOne=null;
+        [...row.children].forEach(x=>x.disabled=false);
+        if(b._st){
+          const st=b._st, key=n+'|'+mineSide+'|'+line;
+          st.mine=false; st.n-=1; st.shown=Math.max(0,st.shown-1);
+          TALK[mineSide]-=1;
+          if(st.n<=0||st.saidByRoom!==true){       // it was only ever yours: take the row too
+            const x=climbing.indexOf(st); if(x>=0)climbing.splice(x,1);
+            TALK[mineSide]-=st.n; st.row.remove(); delete CHORUS[key];
+          }else paintChorus(st);
+          b._st=null; talkBar();
+        }
+        return;
+      }
+      b.classList.add('said'); saidOne=b;
+      [...row.children].forEach(x=>{if(x!==b)x.disabled=true;});
+      const st=chorus(n,mineSide,line,true,true); b._st=st;
+      if(!st.row.parentNode)add(st.row,true); else el('feed').scrollTop=el('feed').scrollHeight;
+      bump(60);
+    };
+    row.appendChild(b);
+  });
+  return row;
+}
 
 /* ---------- presence ---------- */
 function bump(n){ pres+=n;
@@ -632,11 +660,21 @@ function step(){
               (flag?'<span class="flag">'+flag+'</span>':'')+'</div>'+
               '<span class="txt">'+(turned?'\u25B2 ':'')+L.t+'</span>'+
               (L.s?'<span class="sc">'+scline(i)+'</span>':'');
-  d.appendChild(noiseRow(i));
+  d.appendChild(quickRow(i));
   add(d);
 
   // a score moves the room, and a lead change moves it more
   bump(Math.round((L.s==='td'?520:L.s==='fg'?260:110)*(turned?2.1:1)*(0.8+Math.random()*0.5)));
+
+  // both sides start talking on their own, the side the play helped louder than the other
+  const helped=L.w;
+  setTimeout(()=>{
+    add(chorus(i,helped,pick2(SAY.good,i+7)[0],true,false).row);
+  },520);
+  setTimeout(()=>{
+    const b2=pick2(SAY.bad,i+13)[1];
+    add(chorus(i,helped==='a'?'b':'a',b2,false,false).row);
+  },1250);
 
   ROOM.filter(r=>r.i===i).forEach((r,k)=>setTimeout(()=>{
     const c=document.createElement('div');
@@ -644,7 +682,7 @@ function step(){
     c.innerHTML='<span class="dot"></span><span class="who">'+r.who+'</span><span class="t"></span>';
     c.querySelector('.t').textContent=r.t;
     add(c);
-  },700+k*760));
+  },1900+k*820));
 
   head(i);
 }
@@ -653,7 +691,8 @@ function scline(n){const g=GAME.gb[n],k=GAME.kc[n];
 
 function run(){
   clearInterval(timer); timer=null;
-  i=-1; on50=null; seen=[]; climbing.length=0; pres=8200; NOISE.a=0; NOISE.b=0;
+  i=-1; on50=null; seen=[]; climbing.length=0; pres=8200; TALK.a=0; TALK.b=0;
+  Object.keys(CHORUS).forEach(k=>delete CHORUS[k]);
   el('feed').innerHTML='';
   el('nbarA').style.width='50%'; el('nbarB').style.width='50%';
   el('nnum').innerHTML='<b>50</b> / 50';
