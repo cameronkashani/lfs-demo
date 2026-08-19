@@ -808,9 +808,54 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;image-rend
 .ticks.b1,.ticks.b2{bottom:calc(var(--bot) + 92px * var(--g))}
 .tick{flex:1;height:4px;background:rgba(237,228,207,.13);overflow:hidden;transform:skewX(-24deg)}
 .tick i{display:block;height:100%;width:0;background:var(--flare)}
-.hint{position:absolute;bottom:calc(var(--bot) + 61px * var(--g));left:0;right:0;text-align:center;z-index:5;
-  font-family:'IBM Plex Mono',monospace;font-size:calc(8.5px * var(--u));letter-spacing:.3em;text-transform:uppercase;
-  color:rgba(237,228,207,.34);transition:opacity .5s}
+/* ---------- THE SWIPE HINT ----------
+   Two things were wrong. It was a static line that only appeared on the first beat and
+   vanished the moment you moved a pixel, so anybody who nudged the screen without
+   completing a swipe lost the only instruction they were ever given. And the arrow
+   pointed the WRONG WAY: you advance by dragging LEFT, and it read "Swipe" with an arrow
+   to the right, which is worse than saying nothing.
+
+   Now it is a hand travelling the direction your thumb actually has to travel, three
+   passes, translucent, and it comes BACK if you sit still on any of the first four
+   beats without swiping. */
+/* NOT A FIXED OFFSET. This frame is dense at every height: the marquee owns the top, the
+   men and their stat blocks own the middle, the editorial slab owns 709 to 817 and the
+   beat rail sits at 833. The only real gap is the strip directly above the copy, and the
+   copy changes height from beat to beat - so the hint is anchored to it at layout time by
+   placeHint(). Two fixed offsets were tried first and each one landed on something. */
+.hint{position:absolute;left:0;right:0;text-align:center;z-index:5;pointer-events:none;
+  opacity:0;transition:opacity .55s ease;padding:calc(6px * var(--g)) 0}
+/* and its own ground, so it stays legible over whatever the beat happens to be showing */
+.hint:before{content:"";position:absolute;inset:calc(-8px * var(--g)) 0;z-index:-1;
+  background:radial-gradient(ellipse at 50% 50%,rgba(7,6,5,.82),rgba(7,6,5,0) 72%)}
+.hint.on{opacity:1}
+.swipe{position:relative;height:calc(26px * var(--g));margin:0 auto calc(9px * var(--g));
+  width:calc(150px * var(--g))}
+.sw-puck,.sw-trail{position:absolute;top:50%;left:50%;opacity:0}
+/* the hand: one soft translucent disc, because a drawn finger at this size is a smudge */
+.sw-puck{width:calc(19px * var(--g));height:calc(19px * var(--g));margin:calc(-9.5px * var(--g)) 0 0 calc(-9.5px * var(--g));
+  border-radius:50%;background:rgba(237,228,207,.5);
+  box-shadow:0 0 0 calc(6px * var(--g)) rgba(237,228,207,.10),0 0 calc(18px * var(--g)) rgba(237,228,207,.35)}
+/* and the streak it drags behind it, so the direction is legible in a still frame */
+.sw-trail{width:calc(58px * var(--g));height:calc(3px * var(--g));
+  margin:calc(-1.5px * var(--g)) 0 0 0;border-radius:2px;
+  background:linear-gradient(90deg,rgba(237,228,207,.34),rgba(237,228,207,0))}
+.hint.go .sw-puck{animation:swPuck 1s cubic-bezier(.45,0,.35,1) 3}
+.hint.go .sw-trail{animation:swTrail 1s cubic-bezier(.45,0,.35,1) 3}
+/* RIGHT TO LEFT. Verified against the scrub rather than assumed: dragging left is what
+   advances the beat, and a hint that mimes the wrong direction is a bug with a bow on it. */
+@keyframes swPuck{
+  0%{transform:translateX(calc(58px * var(--g)));opacity:0}
+  16%{opacity:1}
+  74%{opacity:1}
+  100%{transform:translateX(calc(-58px * var(--g)));opacity:0}}
+@keyframes swTrail{
+  0%{transform:translateX(calc(58px * var(--g)));opacity:0}
+  22%{opacity:1}
+  74%{opacity:1}
+  100%{transform:translateX(calc(-58px * var(--g)));opacity:0}}
+.sw-word{font-family:'IBM Plex Mono',monospace;font-size:calc(8.5px * var(--u));
+  letter-spacing:.3em;text-transform:uppercase;color:rgba(237,228,207,.4)}
 
 /* The pick marker used to live here as a DOM panel. It is now an object in the
    scene, drawn on the canvas by drawMarker() and projected like everything else. */
@@ -1548,7 +1593,13 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;image-rend
       <button type="submit" id="lvsayBtn">Post</button>
     </form>
   </div>
-  <div class="hint" id="hint">Swipe →</div>
+  <div class="hint" id="hint">
+    <div class="swipe" id="swipe">
+      <div class="sw-trail"></div>
+      <div class="sw-puck"></div>
+    </div>
+    <div class="sw-word" id="swWord">Swipe to see the matchup</div>
+  </div>
   <div class="ticks" id="ticks"></div>
   <div class="endbar" id="endbar">
     <button id="backbtn" class="prime">Back to the stadium</button>
@@ -1781,7 +1832,7 @@ function resize(){const r=el('phone').getBoundingClientRect();
   // read once here, never per frame: a transform does not move offsetTop, but reading it
   // in the loop would force layout against the styles the loop is writing.
   const m=el('marquee');MQ_Y=m.offsetTop+m.offsetHeight*.5;
-  placeBug();
+  placeBug(); placeHint();
   if(typeof fileMeasure==='function')fileMeasure();}
 addEventListener('resize',resize);
 const lerp=(a,b,t)=>a+(b-a)*t,clamp=(v,a,b)=>v<a?a:v>b?b:v;
@@ -3446,6 +3497,7 @@ function down(e){if(S.phase==='swoop'||S.phase==='done')return;
   S.drag=true;axis=null;S.sx=px(e);dy0=py(e);S.st=S.t;S.vel=0;S.lastX=px(e);S.lastT=performance.now();startAudio();}
 function move(e){if(!S.drag)return;
   const dx=px(e)-S.sx,dy=py(e)-dy0;
+  if(Math.abs(dx)>10){ lastMove=performance.now(); swipeHide(); }
   if(!axis&&(Math.abs(dx)>6||Math.abs(dy)>6))axis=Math.abs(dx)>Math.abs(dy)?'x':'y';
   // On the pick beat vertical does nothing and horizontal scrubs like anywhere else. The
   // pull-to-commit that used to live here is gone: the vote is a button. A drag that
@@ -3468,6 +3520,9 @@ function up(){if(!S.drag)return;S.drag=false;dragDetent=-1;
   // leave the beat it started on still moves exactly one beat, because on a phone a
   // flick is the natural gesture and it should not just spring back. It can never move
   // more than one. Same rule the trackpad follows, so every input feels identical.
+  // a completed move is the thing that proves they have learned it
+  if(Math.round(S.t)!==Math.round(S.st))SWIPES++;
+  lastMove=performance.now();
   const start=Math.round(S.st), near=Math.round(S.t);
   const dir=S.vel<0?1:-1;                          // drag left, advance
   let t=near;
@@ -3512,7 +3567,7 @@ function wFeed(d){
   wNew=!!((s&&wSign&&s!==wSign)||m>wLast*2.2+6);
   wLast=m; if(s)wSign=s;
 }
-function wHold(){ wAcc=0; wLock=true; }           // stream is being consumed continuously
+function wHold(){ wAcc=0; wLock=true; lastMove=performance.now(); swipeHide(); }           // stream is being consumed continuously
 function wStep(d){                                // -> -1, 0 or +1, at most once per gesture
   if(wLock&&wNew){wLock=false;wAcc=0;}
   if(wLock)return 0;
@@ -3599,7 +3654,44 @@ addEventListener('keydown',e=>{
     if(e.key==='ArrowUp')commit('LOVE');
     if(e.key==='ArrowDown')commit('MAHOMES');
     if(e.key==='ArrowLeft'){S.target=clamp(Math.round(S.target)-1,0,MAXT);leavePick();}}});
-function enterPick(){if(S.phase!=='play'||S.pick)return;S.phase='picking';el('hint').style.opacity=0;sfxPickOpen();}
+/* ---------- WHEN TO SHOW IT ----------
+   People were not failing to swipe, they were failing to learn that they could. So the
+   hint runs on arrival and RETURNS whenever somebody sits still on any of the first four
+   beats, which is exactly the moment they are stuck. It stops for good after two real
+   swipes, because by then they know and a third reminder is nagging. */
+let SWIPES=0, lastMove=0, lastHint=0;
+function swipeShow(){
+  const h=el('hint');
+  placeHint();
+  // true on all four beats, not just the first
+  el('swWord').textContent = S.t<0.5 ? 'Swipe to see the matchup' : 'Keep swiping';
+  h.classList.remove('go'); void h.offsetWidth;
+  h.classList.add('on','go');
+  lastHint=performance.now();
+}
+function swipeHide(){ el('hint').classList.remove('on','go'); }
+function placeHint(){
+  const h=el('hint'), c=el('copy'); if(!h||!c)return;
+  const ph=el('phone').getBoundingClientRect(), cr=c.getBoundingClientRect();
+  h.style.bottom=Math.round(ph.bottom-cr.top+12*G)+'px';
+}
+/* Three passes and then it is done. Without this the classes stay on after the animation
+   finishes, the puck sits invisible at the end of its keyframes, and swipeTick reads it as
+   still running - so it never comes back, which is the one thing it exists to do. */
+document.querySelector('.sw-puck').addEventListener('animationend',swipeHide);
+function swipeTick(){
+  const now=performance.now();
+  // only on the beats before the pick, and only while nothing else owns the frame
+  const eligible = S.phase==='play' && !S.pick && S.t<MAXT-0.6 && !S.drag
+                   && !(typeof COL!=='undefined'&&(COL.open||STA.open)) && F.pos===0
+                   && bootMs>=BOOT_MS && SWIPES<2;
+  if(!eligible){ if(el('hint').classList.contains('on')&&(S.drag||!eligible))swipeHide(); return; }
+  if(el('hint').classList.contains('on'))return;             // already running
+  if(now-lastMove>2600 && now-lastHint>5200) swipeShow();     // they have gone quiet
+}
+setInterval(swipeTick,400);
+
+function enterPick(){if(S.phase!=='play'||S.pick)return;S.phase='picking';swipeHide();sfxPickOpen();}
 /* Leaving the pick beat backwards. It never used to be possible, so this never used to
    exist: horizontal input died on beat 4 and the only way out was to commit. With the
    vote on a button there is nothing for that rule to protect, and a room you can walk
@@ -4177,7 +4269,7 @@ el('replay').onclick=()=>{stopLive();clearLater();setPaused(false);SWOOP_FROM=nu
   jumbo={...JUMBO0};document.querySelector('.top .streak').textContent='Streak 11';el('endbar').classList.remove('on');sfxBeatSeen=-1;
   // the commit fade left a transition on the copy block; per-frame driving must not inherit it
   el('copy').style.transition='none';
-  el('copy').style.opacity='1';el('marquee').style.opacity='';el('hint').style.opacity='';shownBeat=-1;};
+  el('copy').style.opacity='1';el('marquee').style.opacity='';shownBeat=-1;SWIPES=0;lastMove=0;lastHint=0;};
 /* The vote. The buttons are canvas, so this is a hit-test against the rects drawPickUI()
    stored, on a real press/release pair rather than a click: pressing lights the man's
    whole edge slab, which is the confirmation that the tap landed on a body and not just
@@ -4620,7 +4712,7 @@ function updateCopy(){const b=clamp(Math.round(S.t),0,MAXT);
     box.style.transform=`translate(${(cross?0:-prog*52).toFixed(1)}px,${((1-a)*10).toFixed(1)}px)`;
   }
   if(b!==sfxBeatSeen){ if(sfxBeatSeen>=0) sfxBeat(b, b>sfxBeatSeen?1:-1); sfxBeatSeen=b; }
-  el('hint').style.opacity=S.t>.25?0:'';
+
   // The marquee is a sign hanging in the world, not a caption. Leaving beat 0 flies the
   // camera into it: it grows, drifts opposite the pan, and leaves past the top corner of
   // the frame. It is gone because you went through it, not because it dimmed, so the fade
