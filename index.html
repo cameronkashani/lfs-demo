@@ -300,6 +300,113 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;image-rend
    bottom one still floats. The inner padding has no such floor, so the type comes in
    there instead. */
 .copy.b0 .line span.pn,.copy.b1 .line span.pn{border-left:0;padding-left:5px;margin:0}
+/* ---------- THE SHARE ----------
+   Ported from the standalone study. Two doors into the same mechanism: the reveal, on the
+   night, and every card in the shoebox afterwards - because almost nobody shares at eleven
+   at night when the card lands, they share it on Thursday when it comes up. That makes the
+   share a property of a card rather than a step in a flow.
+
+   The still is the CARD, at story ratio, with the crowd number on it. Nothing new is
+   generated: the card is the only object in this product anyone wants, and RARE on its own
+   says nothing - twenty nine percent took this side and I was one of them is the story. */
+.share{position:absolute;inset:0;z-index:17;display:none;
+  flex-direction:column;align-items:center;justify-content:center;
+  padding:calc(var(--top) + 14px * var(--g)) calc(16px * var(--g)) calc(var(--bot) + 14px * var(--g));
+  background:#070605;opacity:0;transition:opacity .42s ease}
+.share.on{display:flex} .share.lit{opacity:1}
+.sh-room{position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 6%,rgba(255,150,70,.18),rgba(0,0,0,0) 58%),
+             radial-gradient(ellipse at 50% 44%,rgba(0,0,0,0) 30%,rgba(0,0,0,.72))}
+.sh-kick{position:relative;z-index:2;font-family:'IBM Plex Mono',monospace;
+  font-size:calc(9px * var(--g));letter-spacing:.3em;text-transform:uppercase;
+  color:rgba(237,228,207,.5);margin-bottom:calc(12px * var(--g))}
+.sh-stage{position:relative;z-index:2;display:flex;justify-content:center;width:100%}
+
+/* the still: nine by sixteen, built for a story and a thread */
+.still{width:min(262px,78%);aspect-ratio:9/16;position:relative;overflow:hidden;
+  background:linear-gradient(180deg,#0E0A06,#160F09 46%,#0D1B12 100%);
+  display:flex;flex-direction:column;align-items:center;
+  padding:calc(15px * var(--g)) calc(13px * var(--g)) calc(13px * var(--g));
+  gap:calc(9px * var(--g))}
+.still .who{font-family:'IBM Plex Mono',monospace;font-size:calc(8px * var(--g));
+  letter-spacing:.24em;text-transform:uppercase;color:rgba(237,228,207,.6)}
+.still .who b{font-weight:400;color:#EDE4CF}
+.still .sh-card{width:74%}
+.still .sh-card .col-cardwrap{width:100%;filter:drop-shadow(0 8px 14px rgba(0,0,0,.7))}
+/* the info block does not scale with the card, so the serial ran into the surname the
+   moment it shrank for the still. Scale the type with it. */
+.still .col-pname{font-size:11px} .still .col-pmeta{font-size:5px}
+.still .col-serial{font-size:5px;top:7px;right:8px} .still .col-serial b{font-size:6.5px}
+.still .col-info{padding:7px 8px 8px} .still .col-crowdline{font-size:6px}
+.still .col-ttag{font-size:5px;letter-spacing:.2em;padding:2px 6px 2px 8px;top:7px}
+/* NOT `.streak` - that class already belongs to the chip in the top chrome, and this line
+   quietly inherited its border. Namespaced. */
+.still .sh-streak{font-family:'IBM Plex Mono',monospace;font-size:calc(7.5px * var(--g));
+  letter-spacing:.2em;text-transform:uppercase;color:rgba(237,228,207,.45)}
+.still .sh-streak b{font-weight:400;color:#EDE4CF}
+/* the question, not the app name. Nobody taps a logo. */
+.still .q{margin-top:auto;text-align:center}
+.still .q .h{font-family:'Anton',sans-serif;font-weight:400;
+  font-size:calc(15px * var(--g));line-height:1.06;text-transform:uppercase;color:#EDE4CF}
+.still .q .when{font-family:'IBM Plex Mono',monospace;font-size:calc(7.5px * var(--g));
+  letter-spacing:.22em;text-transform:uppercase;color:var(--flare);margin-top:calc(6px * var(--g))}
+
+/* what the friend sees. Playable before it is an install: the moment this is a store page
+   it is an ad, and it dies there. */
+.landing{width:min(300px,88%);display:flex;flex-direction:column;gap:calc(11px * var(--g))}
+.lnd-from{display:flex;gap:calc(9px * var(--g));align-items:flex-start;
+  padding:calc(10px * var(--g)) calc(11px * var(--g));background:#1E1810;
+  border-left:calc(3px * var(--g)) solid var(--pc,#D9B44A)}
+.lnd-from .dot{flex-shrink:0;width:calc(7px * var(--g));height:calc(7px * var(--g));
+  border-radius:50%;background:var(--pc,#D9B44A);margin-top:calc(4px * var(--g))}
+.lnd-from .t{font-family:'Barlow Condensed',sans-serif;font-weight:600;
+  font-size:calc(15px * var(--g));line-height:1.3;color:#EDE4CF}
+.lnd-from .t em{font-style:normal;display:block;font-weight:500;font-size:calc(14px * var(--g));
+  color:rgba(237,228,207,.62);margin-top:calc(3px * var(--g))}
+.lnd-ask{text-align:center;margin-top:calc(3px * var(--g))}
+.lnd-ask .h{font-family:'Anton',sans-serif;font-weight:400;font-size:calc(22px * var(--g));
+  line-height:1.04;text-transform:uppercase;color:#EDE4CF}
+.lnd-ask .when{font-family:'IBM Plex Mono',monospace;font-size:calc(8px * var(--g));
+  letter-spacing:.22em;text-transform:uppercase;color:var(--flare);margin-top:calc(7px * var(--g))}
+.lnd-picks{display:flex;gap:calc(9px * var(--g))}
+.lnd-pick{flex:1;background:#1E1810;border:1px solid #2A241B;text-align:center;
+  padding:calc(13px * var(--g)) calc(8px * var(--g))}
+.lnd-pick.a{border-left:calc(3px * var(--g)) solid #D9B44A}
+.lnd-pick.b{border-left:calc(3px * var(--g)) solid #EC7A62}
+.lnd-pick .n{font-family:'Anton',sans-serif;font-weight:400;font-size:calc(17px * var(--g));
+  line-height:1;color:#EDE4CF}
+.lnd-pick .s{font-family:'IBM Plex Mono',monospace;font-size:calc(7.5px * var(--g));
+  letter-spacing:.16em;text-transform:uppercase;color:rgba(237,228,207,.42);
+  margin-top:calc(6px * var(--g))}
+.lnd-foot{font-family:'IBM Plex Mono',monospace;font-size:calc(8px * var(--g));
+  letter-spacing:.18em;text-transform:uppercase;color:rgba(237,228,207,.4);
+  text-align:center;line-height:1.9}
+.lnd-foot b{font-weight:400;color:rgba(237,228,207,.7)}
+
+.sh-note{position:relative;z-index:2;text-align:center;margin-top:calc(14px * var(--g));
+  font-family:'IBM Plex Mono',monospace;font-size:calc(8.5px * var(--g));
+  letter-spacing:.18em;text-transform:uppercase;color:rgba(237,228,207,.45);line-height:1.8}
+.sh-note b{font-weight:400;color:#EDE4CF}
+.sh-bar{position:relative;z-index:2;display:flex;gap:calc(8px * var(--g));
+  margin-top:calc(15px * var(--g));flex-wrap:wrap;justify-content:center}
+.sh-bar button{font-family:'IBM Plex Mono',monospace;font-size:calc(9.5px * var(--u));
+  letter-spacing:.2em;text-transform:uppercase;color:rgba(237,228,207,.68);
+  background:transparent;border:1px solid rgba(237,228,207,.22);
+  padding:calc(10px * var(--u)) calc(14px * var(--u));cursor:pointer}
+.sh-bar button.prime{color:#0B0705;background:var(--flare);border-color:var(--flare)}
+/* the send on the reveal: offered beside the primary, never behind a glyph in a corner */
+.rv-bar button.send{color:var(--flare);border-color:rgba(255,90,30,.6)}
+/* And on every card in the shoebox, because the flex happens days later in conversation.
+   Scoped to the shelf: the reveal and the still render the SAME card template, and an
+   unscoped chip turned up inside both of them - on the still it would have been printed
+   into the image a friend receives. */
+.col-send{display:none}
+#colShelf .col-send{display:block;position:absolute;right:calc(-6px * var(--g));bottom:74px;z-index:12;
+  font-family:'IBM Plex Mono',monospace;font-size:calc(8px * var(--g));letter-spacing:.18em;
+  text-transform:uppercase;color:var(--flare);background:#0B0907;
+  border:1px solid rgba(255,90,30,.55);padding:calc(6px * var(--g)) calc(9px * var(--g));
+  cursor:pointer}
+
 /* ---------- THE REVEAL ----------
    The board says you minted RARE and then, until now, handed you two buttons. The card is
    the only object in this product anybody actually keeps, so it has to be turned over in
@@ -1447,6 +1554,17 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;image-rend
     <button id="backbtn" class="prime">Back to the stadium</button>
     <button id="replay">Run it back</button>
   </div>
+  <div class="share" id="share">
+    <div class="sh-room"></div>
+    <div class="sh-kick" id="shKick">Send it</div>
+    <div class="sh-stage" id="shStage"></div>
+    <div class="sh-note" id="shNote"></div>
+    <div class="sh-bar">
+      <button id="shSend" class="prime">Send</button>
+      <button id="shFlip">See what they get</button>
+      <button id="shClose">Close</button>
+    </div>
+  </div>
   <div class="reveal" id="reveal">
     <div class="rv-room"><div class="rv-lamp"></div><div class="rv-vig"></div></div>
     <div class="rv-kick" id="rvKick">The card</div>
@@ -1454,6 +1572,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;image-rend
     <div class="rv-note" id="rvNote"></div>
     <div class="rv-bar" id="rvBar">
       <button id="rvKeep" class="prime">Add to the collection</button>
+      <button id="rvSend" class="send">Send it</button>
       <button id="rvSee">See the board</button>
     </div>
   </div>
@@ -3551,7 +3670,7 @@ function saySend(){
   const side=S.pick==='LOVE'?'a':'b';
   const c=document.createElement('div');
   c.className='lvcom me s'+side;
-  c.innerHTML='<span class="dot"></span><span class="who">@you</span>'+
+  c.innerHTML='<span class="dot"></span><span class="who">'+HANDLE+'</span>'+
               '<span class="txt"></span>';
   c.querySelector('.txt').textContent=t;      // it is typed by a person, never parsed as markup
   el('lvfeed').appendChild(c);
@@ -3895,6 +4014,80 @@ function colStamp(c){
   const at={common:0,uncommon:1,rare:2,legendary:3,one:4}[c.tier];
   bump(tiers[at],1);
 }
+/* ---------- SENDING IT ----------
+   One mechanism, two doors. shareOpen takes a card and builds the still from it, so the
+   reveal and the shoebox share every pixel and every number rather than looking alike. */
+const HANDLE='@cam';
+let SH_CARD=null, SH_VIEW='still';
+function shareOpen(card){
+  if(!card)return;
+  SH_CARD=card; SH_VIEW='still';
+  const sh=el('share');
+  sh.style.setProperty('--pc',card.pc);
+  sh.classList.add('on');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>sh.classList.add('lit')));
+  shareDraw(); sfxPickOpen();
+}
+function shareClose(){
+  const sh=el('share');
+  sh.classList.remove('lit');
+  setTimeout(()=>{sh.classList.remove('on');el('shStage').innerHTML='';},460);
+  sfxTick();
+}
+function shareDraw(){
+  const c=SH_CARD; if(!c)return;
+  const still = SH_VIEW==='still';
+  el('shKick').textContent = still?'Send it':'What they get';
+  el('shFlip').textContent = still?'See what they get':'Back to the still';
+  el('shSend').style.display = still?'':'none';
+  el('shStage').innerHTML = still ? stillHTML(c) : landingHTML(c);
+  /* The note is the ANNOTATION, not a caption. On the landing it was repeating the line
+     already printed inside the mock, which read as a stutter. */
+  el('shNote').innerHTML = still
+    ? 'The question, not the app name<br><b>'+c.run.replace('/ ','')+'</b> own one'
+    : 'They cannot play tonight<br><b>so the ask is tomorrow</b>';
+}
+/* THE CROWD NUMBER IS THE PAYLOAD. Rare on its own says nothing. */
+function stillHTML(c){
+  return '<div class="still">'+
+    '<div class="who"><b>'+HANDLE+'</b> called it</div>'+
+    '<div class="sh-card">'+colCardHTML(c,0)+'</div>'+
+    '<div class="sh-streak"><b>11</b> nights standing</div>'+
+    '<div class="q"><div class="h">Who throws for<br>more yards tonight?</div>'+
+    '<div class="when">Tomorrow &#183; 8:15p ET</div></div></div>';
+}
+/* Your friend cannot play tonight - tonight is settled and everybody gets the same daily
+   matchup - so the only ask available is BE IN THE ROOM TOMORROW. */
+function landingHTML(c){
+  const side=c.name.indexOf('LOVE')>=0?'Love':'Mahomes';
+  return '<div class="landing">'+
+    '<div class="lnd-from"><span class="dot"></span><span class="t">'+
+      HANDLE+' took '+side+' and it landed.'+
+      '<em>29% of the room did. He is eleven nights deep.</em></span></div>'+
+    '<div class="lnd-ask"><div class="h">Who throws for<br>more yards tonight?</div>'+
+      '<div class="when">Green Bay at Kansas City &#183; 8:15p ET</div></div>'+
+    '<div class="lnd-picks">'+
+      '<div class="lnd-pick a"><div class="n">LOVE</div><div class="s">258.9 a game</div></div>'+
+      '<div class="lnd-pick b"><div class="n">MAHOMES</div><div class="s">268.4 a game</div></div>'+
+    '</div>'+
+    '<div class="lnd-foot">No account yet &#183; no download yet<br><b>Pick first</b></div></div>';
+}
+el('shClose').onclick=shareClose;
+el('shFlip').onclick=()=>{SH_VIEW=SH_VIEW==='still'?'landing':'still';shareDraw();sfxTick();};
+el('shSend').onclick=()=>{ el('shNote').innerHTML='Sent<br><b>they get tomorrow’s call</b>';
+  sfxCommit(); setTimeout(shareClose,900); };
+// door one: the night it lands
+el('rvSend').onclick=()=>shareOpen(MINTED||tonightCard());
+/* Door two: any card you already own. Delegated on the document rather than on the shelf
+   for two reasons: the shelf is rebuilt whenever a card is minted, and `colShelf` is
+   declared further down this file than this line runs - a const below its reader is a
+   temporal dead zone, which has already taken this script down twice. */
+document.addEventListener('click',e=>{
+  const b=e.target&&e.target.closest&&e.target.closest('.col-send'); if(!b)return;
+  e.stopPropagation(); e.preventDefault();
+  shareOpen(COLCARDS[+b.dataset.i]);
+});
+
 function revealClose(){
   const rv=el('reveal');
   rv.classList.remove('lit','turned','done');
@@ -4740,6 +4933,7 @@ function colArt(c){
    that look alike, or they drift the first time either one is touched. */
 function colCardHTML(c,i){return `
  <div class="col-cardwrap" data-i="${i}">
+  <button class="col-send" type="button" data-i="${i}">Send it</button>
   <div class="col-card col-t-${c.tier}" style="--pc:${c.pc}">
    <div class="col-face col-front">
     ${colArt(c)}
