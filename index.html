@@ -818,13 +818,13 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;image-rend
    Now it is a hand travelling the direction your thumb actually has to travel, three
    passes, translucent, and it comes BACK if you sit still on any of the first four
    beats without swiping. */
-/* NOT A FIXED OFFSET. This frame is dense at every height: the marquee owns the top, the
-   men and their stat blocks own the middle, the editorial slab owns 709 to 817 and the
-   beat rail sits at 833. The only real gap is the strip directly above the copy, and the
-   copy changes height from beat to beat - so the hint is anchored to it at layout time by
-   placeHint(). Two fixed offsets were tried first and each one landed on something. */
-.hint{position:absolute;left:0;right:0;text-align:center;z-index:5;pointer-events:none;
-  opacity:0;transition:opacity .55s ease;padding:calc(6px * var(--g)) 0}
+/* CHEST HEIGHT, BETWEEN THE TWO MEN. It went low first, on the theory that a hint belongs
+   near the thumb, and it fought everything down there: the beat rail at 833, then the
+   editorial slab at 709. Up here it is over the field on every one of the first four
+   beats, it is the middle of the frame so it is the first place the eye lands, and it is
+   where the gesture actually happens. */
+.hint{position:absolute;left:0;right:0;top:31%;text-align:center;z-index:5;
+  pointer-events:none;opacity:0;transition:opacity .55s ease;padding:calc(6px * var(--g)) 0}
 /* and its own ground, so it stays legible over whatever the beat happens to be showing */
 .hint:before{content:"";position:absolute;inset:calc(-8px * var(--g)) 0;z-index:-1;
   background:radial-gradient(ellipse at 50% 50%,rgba(7,6,5,.82),rgba(7,6,5,0) 72%)}
@@ -1598,7 +1598,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block;image-rend
       <div class="sw-trail"></div>
       <div class="sw-puck"></div>
     </div>
-    <div class="sw-word" id="swWord">Swipe to see the matchup</div>
+    <div class="sw-word" id="swWord">Swipe</div>
   </div>
   <div class="ticks" id="ticks"></div>
   <div class="endbar" id="endbar">
@@ -3663,18 +3663,12 @@ let SWIPES=0, lastMove=0, lastHint=0;
 function swipeShow(){
   const h=el('hint');
   placeHint();
-  // true on all four beats, not just the first
-  el('swWord').textContent = S.t<0.5 ? 'Swipe to see the matchup' : 'Keep swiping';
   h.classList.remove('go'); void h.offsetWidth;
   h.classList.add('on','go');
   lastHint=performance.now();
 }
 function swipeHide(){ el('hint').classList.remove('on','go'); }
-function placeHint(){
-  const h=el('hint'), c=el('copy'); if(!h||!c)return;
-  const ph=el('phone').getBoundingClientRect(), cr=c.getBoundingClientRect();
-  h.style.bottom=Math.round(ph.bottom-cr.top+12*G)+'px';
-}
+function placeHint(){}   // it sits at a fixed share of the frame now, so CSS owns it
 /* Three passes and then it is done. Without this the classes stay on after the animation
    finishes, the puck sits invisible at the end of its keyframes, and swipeTick reads it as
    still running - so it never comes back, which is the one thing it exists to do. */
