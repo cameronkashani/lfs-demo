@@ -1,0 +1,77 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LFS Console · Build notes</title><style>
+:root{--soft:#C6CEDA;--mut:#7C8697;--dim:#5C6675;--acc:#FB4F14;--gold:#E9B949;--bd:#242C36;--pan:#12171E;
+--mono:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#05070A;color:var(--soft);font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;
+line-height:1.62;max-width:880px;margin:0 auto;padding:34px 20px 90px}
+a{color:var(--gold)}
+.back{font-family:var(--mono);font-size:10px;letter-spacing:1.6px;color:var(--acc);
+text-decoration:none;text-transform:uppercase;display:inline-block;margin-bottom:26px}
+h1{font-size:30px;line-height:1.1;color:#EDF1F7;margin:6px 0 18px}
+h2{font-size:19px;color:#EDF1F7;margin:34px 0 12px;padding-top:16px;border-top:1px solid var(--bd)}
+h3{font-size:15px;color:var(--gold);margin:22px 0 8px}
+p{margin:0 0 13px;color:var(--soft)}
+ul,ol{margin:0 0 15px 20px}li{margin-bottom:8px}
+code{font-family:var(--mono);font-size:12.5px;background:var(--pan);border:1px solid var(--bd);
+padding:1px 5px;border-radius:3px;color:var(--gold)}
+b{color:#EDF1F7}
+hr{border:0;border-top:1px solid var(--bd);margin:28px 0}
+table{width:100%;border-collapse:collapse;margin:0 0 18px;font-size:13.5px}
+th{text-align:left;font-family:var(--mono);font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;
+color:var(--dim);padding:8px 10px;border-bottom:1px solid var(--bd)}
+td{padding:9px 10px;border-bottom:1px solid #171D25;color:var(--mut);vertical-align:top}
+td:first-child{color:var(--soft);white-space:nowrap}
+</style></head><body>
+<a class="back" href="./">&larr; Back to the console</a>
+<h1>The admin console, as a working prototype</h1>
+<p><b>Open <code>console.html</code> in any browser. No install, no server, no network.</b></p>
+<p>Then press <b>BUILD NOTES</b> in the top bar. Every stage gets an annotation panel underneath it explaining where its data comes from, what is faked in this file, and what you have to build.</p>
+<hr>
+<h2>What this is</h2>
+<p>The six stage console from the earlier spec pack, running. Cameron and I built a card with it against live data for Thursday 20 August, and it is loaded with that night&#x27;s real slate.</p>
+<p>Click a matchup on stage 1, pick a wrinkle on stage 2, and watch stages 3 and 4 rewrite themselves. That is the whole idea: <b>the operator makes two choices and the system does the rest.</b></p>
+<hr>
+<h2>What is real and what is not</h2>
+<p><b>Real.</b> Every number came back from a live BALLDONTLIE call on 19 August 2026.</p>
+<ul><li>The two preseason games, their venues and kickoff times</li><li>Both rosters, from the DraftKings slate, with per player status flags</li><li>Every player&#x27;s 2025 season line</li><li>The 2025 defensive rankings, computed from 17,777 player game rows</li><li>The six league wide effects in the wrinkle scoring, measured the same way</li><li>The betting totals, which were updating while we tested</li></ul>
+<p><b>Faked.</b> Two things only.</p>
+<ul><li>The candidate list is frozen. In production it is rebuilt at load from three calls.</li><li>The effects table has six rows instead of a few hundred.</li></ul>
+<p><b>Deliberately broken.</b> The art gate fails on every row, because it should. The football world and the weather scene are the only two pieces of art that exist. There is no action sprite, so beats 1 and 2 have nothing to scrub. That is not a bug in the prototype, it is the actual state of the project and the console is right to block it.</p>
+<hr>
+<h2>The endpoints behind each stage</h2>
+<p>Base URL is <code>https://api.balldontlie.io</code>, auth is <code>Authorization: Bearer &lt;key&gt;</code>.</p>
+<table><thead><tr><th>Stage</th><th>Call</th><th>Note</th></tr></thead><tbody>
+<tr><td>1</td><td><code>GET /nfl/v1/games?seasons[]=2026</code></td><td>Filter to tomorrow <b>in code</b></td></tr>
+<tr><td>1</td><td><code>GET /nfl/v1/dfs/slates</code> then <code>/dfs/draftables?slate_id=</code></td><td>The only NFL roster source</td></tr>
+<tr><td>1</td><td><code>GET /nfl/v1/season_stats?season=2025&amp;player_ids[]=</code></td><td>Max 8 ids per call</td></tr>
+<tr><td>1</td><td><code>GET /nfl/v1/odds?season=&amp;week=</code></td><td>Internal only, never shown</td></tr>
+<tr><td>1</td><td><code>GET /nfl/v1/player_injuries</code></td><td>The availability gate</td></tr>
+<tr><td>2</td><td><code>GET /nfl/v1/stats?seasons[]=</code></td><td>The game log, for the effects job</td></tr>
+<tr><td>2</td><td><code>GET /nfl/v1/team_stats?season=</code></td><td>Team level per game rows</td></tr>
+<tr><td>live</td><td><code>GET /nfl/v1/plays?game_id=</code></td><td>Singular, no brackets. Runs live during a game.</td></tr>
+<tr><td>MLB</td><td><code>GET /mlb/v1/lineups?game_ids[]=</code></td><td>The only home of <code>is_probable_pitcher</code></td></tr>
+</tbody></table>
+<hr>
+<h2>Six traps that cost me time</h2>
+<ol><li><b><code>dates[]</code> does not find NFL preseason games.</b> The Raiders at Texans game exists on 2026-08-21 and loads fine by id, but <code>dates[]=2026-08-21</code> returns zero rows. <code>weeks[]=3</code> returns the sixteen regular season week 3 games instead.</li></ol>
+<ol><li><b><code>per_page</code> over 100 returns an empty array with a 200.</b> Not an error. Cap at 100.</li></ol>
+<ol><li><b><code>season_stats</code> silently drops players on large id batches.</b> 20 ids returned 65 of 126 players. Use 8.</li></ol>
+<ol><li><b>Parameter style is not consistent.</b> Most filters want the bracket array form, <code>team_ids[]</code> and <code>game_ids[]</code> and <code>dates[]</code>. But <code>plays</code> wants <code>game_id</code> singular, and NFL odds wants <code>season</code> and <code>week</code>. <b>A 400 means the endpoint exists and you called it wrong. Read the body, it names the parameter.</b> I wrote off four working endpoints as missing before I learned this.</li></ol>
+<ol><li><b>Innings pitched is not a decimal.</b> MLB only. <code>6.1</code> means six and one third. Naive float maths gave me a 3.96 ERA for a 3.77 pitcher. Convert once, at ingest.</li></ol>
+<ol><li><b>The game log includes in-progress games, season stats do not.</b> At 20:00 ET games are running, so any season average computed naively from the log is polluted by tonight&#x27;s half finished lines. Filter on game status before aggregating.</li></ol>
+<hr>
+<h2>What does not exist and never will</h2>
+<p>Confirmed absent for both NFL and MLB, under every path variant including v2 and the opening forms: box scores, leaders, player props, depth charts, advanced stats, season averages by category, contracts. All of them exist for NBA only. None is load bearing for us.</p>
+<p>NFL has <b>no lineups endpoint</b>, so there is no equivalent of <code>is_probable_pitcher</code> and no inactives list. Rosters come from the DFS draftables instead.</p>
+<hr>
+<h2>The three things to build first</h2>
+<ol><li><b>The effects table and its weekly job.</b> Everything on stage 2 reads from it. Nothing statistical should run while an operator waits.</li></ol>
+<ol><li><b>The asset registry.</b> Three states per asset: DRAFT, APPROVED_FOR_BUILD, SHIPPED_IN vN. Only SHIPPED counts for the gate, because art lives in the app binary and needs a release.</li></ol>
+<ol><li><b>The re-check and void path.</b> Between publish and lock a named participant can disappear. Sportsbooks solve this with a rule rather than with timing: a player prop on a pitcher who does not start is voided. Our card is the same shape. A void preserves the streak and issues no receipt.</li></ol>
+<hr>
+<h2>Open questions for you</h2>
+<ul><li>Where does the asset registry live, and who updates it when a build ships?</li><li>Is field level locking worth it in v1, or do we accept that changing the wrinkle wipes edits?</li><li>Do we record the betting line nightly starting now? There is no historical odds data in this</li></ul>
+<p>  API at all, so every night we skip is a night we cannot backtest later. It is one small job   and it is impossible to recover.</p>
+</body></html>

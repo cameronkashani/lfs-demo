@@ -1,0 +1,418 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>LFS Console · Thu 20 Aug</title>
+<style>
+:root{--ink:#0A0D11;--pan:#12171E;--pan2:#0E131A;--bd:#242C36;--soft:#C6CEDA;--mut:#7C8697;--dim:#5C6675;
+--acc:#FB4F14;--gold:#E9B949;--green:#25C55E;--red:#FF5A5A;
+--mono:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#05070A;color:var(--soft);font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;
+padding:22px 18px 70px;max-width:1180px;margin:0 auto;line-height:1.5}
+.top{display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.brand{font-family:var(--mono);font-size:11px;letter-spacing:2.4px;color:var(--gold);font-weight:700}
+.date{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:1px}
+.track{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.tr{font-family:var(--mono);font-size:8.5px;letter-spacing:1.2px;padding:5px 10px;border-radius:14px;
+border:1px solid var(--bd);color:var(--dim);background:var(--pan);cursor:pointer;user-select:none;font-weight:700}
+.tr.on{background:var(--gold);color:#0A0D11;border-color:var(--gold)}
+.tr.done{color:var(--green);border-color:#1E3A2A}
+.stage{display:none}.stage.on{display:block}
+.card{background:var(--pan2);border:1px solid var(--bd);border-radius:15px;overflow:hidden;margin-bottom:16px}
+.ch{padding:13px 17px;background:var(--pan);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:11px}
+.ch h2{font-size:14.5px;color:#EDF1F6}
+.ch .hint{margin-left:auto;font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.8px}
+.cb{padding:15px 17px}
+.opt{border:1px solid var(--bd);border-radius:12px;padding:12px 14px;margin-bottom:9px;cursor:pointer;
+background:var(--pan);transition:.12s;display:flex;align-items:center;gap:14px}
+.opt:hover{border-color:#3A4655;background:#151C25}
+.opt.sel{border-color:var(--gold);background:rgba(233,185,73,.07)}
+.opt .rk{font-family:var(--mono);font-size:9px;color:var(--dim);width:20px;flex:none;font-weight:700}
+.opt .main{flex:1;min-width:0}
+.opt .t1{font-size:13.5px;color:#EDF1F6;font-weight:600}
+.opt .t2{font-family:var(--mono);font-size:9px;color:var(--mut);letter-spacing:.5px;margin-top:3px}
+.opt .sc{text-align:right;flex:none}
+.opt .sc b{font-family:var(--mono);font-size:16px;color:#EDF1F6;display:block}
+.opt .sc span{font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:1px}
+.bal{display:flex;height:6px;border-radius:3px;overflow:hidden;width:104px;margin-top:6px;background:#1A222C}
+.bal i{display:block;height:100%}
+.bal .l{background:var(--acc)}.bal .r{background:#3E5570}
+.dots{display:inline-flex;gap:3px;margin-left:8px}
+.dots i{width:6px;height:6px;border-radius:50%;display:block}
+.g{background:var(--green)}.r{background:var(--red)}.o{background:#2E3742}
+.btn{font-family:var(--mono);font-size:9.5px;letter-spacing:1.6px;font-weight:700;padding:11px 20px;
+border-radius:9px;border:none;cursor:pointer;background:var(--gold);color:#0A0D11}
+.btn:disabled{background:#232B36;color:#4A535F;cursor:not-allowed}
+.btn.ghost{background:transparent;border:1px solid var(--bd);color:var(--mut)}
+.bar{display:flex;gap:9px;align-items:center;margin-top:6px}
+.note{font-size:11.5px;color:var(--mut);margin-top:11px;line-height:1.6}
+.note b{color:var(--soft)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.box{background:var(--pan);border:1px solid var(--bd);border-radius:11px;padding:13px 14px}
+.bh{font-family:var(--mono);font-size:8px;letter-spacing:1.5px;color:var(--dim);font-weight:700;margin-bottom:9px}
+.kv{display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid #161D26}
+.kv:last-child{border:none}
+.kv span{color:var(--mut)}.kv b{font-family:var(--mono);color:#EDF1F6;font-size:13px}
+.beat{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid #171E27;align-items:flex-start}
+.beat:last-child{border:none}
+.bn{font-family:var(--mono);font-size:8px;letter-spacing:1.2px;color:var(--gold);width:80px;flex:none;padding-top:3px;font-weight:700}
+.bt{font-size:13.5px;color:#EDF1F6;line-height:1.45;flex:1}
+.bt small{display:block;color:var(--mut);font-size:10.5px;margin-top:4px;font-family:var(--mono);letter-spacing:.4px}
+.cc{font-family:var(--mono);font-size:8px;color:var(--dim);flex:none;padding-top:4px}
+.cc.over{color:var(--red)}
+.pill{display:inline-block;font-family:var(--mono);font-size:8px;letter-spacing:1px;padding:2px 6px;
+border-radius:4px;font-weight:700;margin-left:6px}
+.pill.ok{background:rgba(37,197,94,.15);color:var(--green)}
+.pill.no{background:rgba(255,90,90,.15);color:var(--red)}
+.pill.w{background:rgba(233,185,73,.15);color:var(--gold)}
+.msg{border-radius:11px;padding:13px 15px;margin-top:13px;font-size:12px;line-height:1.55}
+.msg.bad{background:rgba(255,90,90,.07);border:1px solid rgba(255,90,90,.3)}
+.msg.good{background:rgba(37,197,94,.06);border:1px solid rgba(37,197,94,.28)}
+.msg.gold{background:rgba(233,185,73,.06);border:1px solid rgba(233,185,73,.3)}
+.msg u{text-decoration:none;font-family:var(--mono);font-size:8.5px;letter-spacing:1.4px;font-weight:700;
+display:block;margin-bottom:6px}
+.msg.bad u{color:var(--red)}.msg.good u{color:var(--green)}.msg.gold u{color:var(--gold)}
+.nb{background:#0B1220;border:1px solid #1E3350;border-left:3px solid #3E7BC8;border-radius:11px;
+padding:13px 15px;margin-top:14px;display:none}
+body.notes .nb{display:block}
+.nb u{text-decoration:none;font-family:var(--mono);font-size:8.5px;letter-spacing:1.5px;font-weight:700;
+color:#6FA8E8;display:block;margin-bottom:9px}
+.nb h4{font-family:var(--mono);font-size:8px;letter-spacing:1.3px;color:#4E7BB0;margin:11px 0 5px;font-weight:700}
+.nb h4:first-of-type{margin-top:0}
+.nb p{font-size:11.5px;color:#9FB4CC;line-height:1.6;margin-bottom:5px}
+.nb code{font-family:var(--mono);font-size:10.5px;color:#B9D4F0;background:#0E1A2B;padding:1px 5px;
+border-radius:4px;display:inline-block;margin:2px 0}
+.nb ul{margin:2px 0 0 16px}
+.nb li{font-size:11.5px;color:#9FB4CC;line-height:1.55;margin-bottom:3px}
+.nb b{color:#D8E6F5}
+.toggle{font-family:var(--mono);font-size:8.5px;letter-spacing:1.4px;padding:6px 12px;border-radius:14px;
+border:1px solid #1E3350;background:#0B1220;color:#6FA8E8;cursor:pointer;font-weight:700}
+body.notes .toggle{background:#3E7BC8;color:#05070A;border-color:#3E7BC8}
+table{width:100%;border-collapse:collapse;font-size:11.5px}
+th{font-family:var(--mono);font-size:8px;letter-spacing:1.1px;color:var(--dim);text-align:left;
+padding:7px;border-bottom:1px solid var(--bd);font-weight:700}
+td{padding:8px 7px;border-bottom:1px solid #171E27}
+td.n{font-family:var(--mono);text-align:right}
+</style></head><body>
+
+<div class="top">
+  <span class="brand">LAST FAN STANDING · CONSOLE</span>
+  <span class="date">BUILDING FOR THU 20 AUGUST · NFL PRESEASON</span>
+  <button class="toggle" onclick="document.body.classList.toggle('notes')">BUILD NOTES</button>
+  <div class="track" id="track"></div>
+</div>
+
+<div id="s1" class="stage on"></div>
+<div id="s2" class="stage"></div>
+<div id="s3" class="stage"></div>
+<div id="s4" class="stage"></div>
+<div id="s5" class="stage"></div>
+<div id="s6" class="stage"></div>
+
+<script>
+const EFF={qb_opp:{soft:246.4,tough:189.9,n:347},wr_opp:{soft:53.9,tough:43.7,n:874},
+ indoor_qb:{i:224.3,o:209.7,n:1400},home_qb:{h:221.5,a:208.8,n:1400}};
+const GM={1393564:{away:'LV',home:'HOU',ven:'NRG Stadium',et:'8:00 PM ET',total:'37.5',dome:true},
+          1393565:{away:'SF',home:'LAC',ven:'SoFi Stadium',et:'10:00 PM ET',total:'38.5',dome:true}};
+const C=[
+{gid:1393565,pos:'QB',mk:'PASSING YARDS',bal:50.8,
+ a:{n:'Brock Purdy',tm:'SF',v:240.8,or:4,oy:194.9,s:{cmp:69.4,td:'20/10',ypa:7.63,att:284,gp:9}},
+ b:{n:'Justin Herbert',tm:'LAC',v:232.9,or:23,oy:241.8,s:{cmp:66.4,td:'26/13',ypa:7.28,att:512,gp:16}}},
+{gid:1393564,pos:'WR',mk:'RECEIVING YARDS',bal:50.9,
+ a:{n:'Jalen Nailor',tm:'LV',v:26.1,or:7,oy:205.1,s:{rec:29,tgt:53,ypr:15.3,td:4,gp:17}},
+ b:{n:'Xavier Hutchinson',tm:'HOU',v:25.2,or:13,oy:214.4,s:{rec:35,tgt:57,ypr:12.2,td:3,gp:17}}},
+{gid:1393565,pos:'WR',mk:'RECEIVING YARDS',bal:48.3,
+ a:{n:'Mike Evans',tm:'SF',v:46.0,or:4,oy:194.9,s:{rec:30,tgt:61,ypr:12.3,td:3,gp:8}},
+ b:{n:'Ladd McConkey',tm:'LAC',v:49.3,or:23,oy:241.8,s:{rec:66,tgt:106,ypr:12.0,td:6,gp:16}}},
+{gid:1393565,pos:'WR',mk:'RECEIVING YARDS',bal:48.0,
+ a:{n:'Deebo Samuel Sr.',tm:'SF',v:45.4,or:4,oy:194.9,s:{rec:72,tgt:99,ypr:10.1,td:5,gp:16}},
+ b:{n:'Ladd McConkey',tm:'LAC',v:49.3,or:23,oy:241.8,s:{rec:66,tgt:106,ypr:12.0,td:6,gp:16}}},
+{gid:1393565,pos:'WR',mk:'RECEIVING YARDS',bal:52.8,
+ a:{n:'Ricky Pearsall',tm:'SF',v:58.7,or:4,oy:194.9,s:{rec:36,tgt:53,ypr:14.7,td:0,gp:9}},
+ b:{n:'Quentin Johnston',tm:'LAC',v:52.5,or:23,oy:241.8,s:{rec:51,tgt:85,ypr:14.4,td:8,gp:14}}},
+{gid:1393564,pos:'QB',mk:'PASSING YARDS',bal:53.0,
+ a:{n:'Kirk Cousins',tm:'LV',v:172.1,or:7,oy:205.1,s:{cmp:61.7,td:'10/5',ypa:6.40,att:269,gp:10}},
+ b:{n:'Davis Mills',tm:'HOU',v:152.5,or:13,oy:214.4,s:{cmp:57.2,td:'5/1',ypa:5.75,att:159,gp:6}}},
+{gid:1393565,pos:'WR',mk:'RECEIVING YARDS',bal:46.7,
+ a:{n:'Mike Evans',tm:'SF',v:46.0,or:4,oy:194.9,s:{rec:30,tgt:61,ypr:12.3,td:3,gp:8}},
+ b:{n:'Quentin Johnston',tm:'LAC',v:52.5,or:23,oy:241.8,s:{rec:51,tgt:85,ypr:14.4,td:8,gp:14}}},
+];
+let ST={cand:null,wrinkle:null,stage:1,max:1};
+
+/* ---------- wrinkle pool ---------- */
+function pool(c){
+  const G=GM[c.gid], E=c.pos==='QB'?EFF.qb_opp:EFF.wr_opp;
+  const out=[];
+  const gap=Math.abs(c.a.or-c.b.or), asym=+(gap/31).toFixed(2);
+  const easier = c.a.or>c.b.or ? c.b : c.a;   // higher rank number = softer defence faced? no:
+  // a.or is the rank of the defence player A FACES. Higher number = weaker defence = better for A.
+  const favours = c.a.or>c.b.or ? c.a : c.b;
+  out.push({id:'opp',fam:'Opponent · WALL',built:false,asym,
+    size:+(100*(E.soft-E.tough)/E.tough).toFixed(0),
+    ttl:'Opponent defence',
+    claim: last(c.a.n)+' faces the '+ord(c.a.or)+' toughest defence in football. '+last(c.b.n)+' faces the '+ord(c.b.or)+'.',
+    aVal:c.a.oy, bVal:c.b.oy, aLab:c.b.tm+' allows '+c.a.oy+' yds/gm', bLab:c.a.tm+' allows '+c.b.oy+' yds/gm',
+    ev:['vs a bottom-10 defence',E.soft,'vs a top-10 defence',E.tough,E.n+' player games, 2025'],
+    lean: gap>=8 ? favours.n+' by the matchup' : null});
+  if(c.pos==='QB'){
+    out.push({id:'home',fam:'Environment · WEATHER',built:true,asym:1,
+      size:+(100*(EFF.home_qb.h-EFF.home_qb.a)/EFF.home_qb.a).toFixed(0),
+      ttl:'Home field',
+      claim: c.b.n.split(' ').slice(-1)[0]+' is at home. '+c.a.n.split(' ').slice(-1)[0]+' is not.',
+      aVal:EFF.home_qb.a,bVal:EFF.home_qb.h,aLab:'on the road',bLab:'at home',
+      ev:['QB at home',EFF.home_qb.h,'QB on the road',EFF.home_qb.a,EFF.home_qb.n+' team games, 2025'],
+      lean:c.b.n+' by about 13 yards'});
+  }
+  out.push({id:'dome',fam:'Environment · WEATHER',built:true,asym:0,
+    size:+(100*(EFF.indoor_qb.i-EFF.indoor_qb.o)/EFF.indoor_qb.o).toFixed(0),
+    ttl:'Roof closed',
+    claim:'The roof is closed at '+G.ven+'. Both of them get the easy version.',
+    aVal:EFF.indoor_qb.i,bVal:EFF.indoor_qb.i,aLab:'indoors',bLab:'indoors',
+    ev:['Offence indoors',EFF.indoor_qb.i,'Offence outdoors',EFF.indoor_qb.o,EFF.indoor_qb.n+' team games, 2025'],
+    lean:null});
+  out.push({id:'form',fam:'none · TEXT ONLY',built:true,asym:0,size:0,ttl:'Player form',
+    claim:'Nothing. Every personal split for both men came back under two standard errors.',
+    aVal:0,bVal:0,aLab:'no qualifying split',bLab:'no qualifying split',
+    ev:['Splits tested',14,'Cleared the bar',0,'the threshold is 2 standard errors'],lean:null});
+  out.forEach(w=>w.score=+(w.size*w.asym).toFixed(1));
+  return out.sort((x,y)=>y.score-x.score);
+}
+function ord(n){const s=['th','st','nd','rd'],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0]);}
+function last(n){return n.split(' ').slice(-1)[0].replace('Sr.','');}
+
+/* ---------- render ---------- */
+function track(){
+  const L=['1 PICK','2 SET UP','3 BEATS','4 THE FILE','5 THE LOOK','6 PUBLISH'];
+  document.getElementById('track').innerHTML=L.map((l,i)=>
+   `<span class="tr ${ST.stage===i+1?'on':''} ${ST.max>i+1?'done':''}" onclick="go(${i+1})">${l}</span>`).join('');
+}
+function go(n){ if(n>ST.max) return; ST.stage=n; document.querySelectorAll('.stage').forEach((e,i)=>e.classList.toggle('on',i===n-1)); track(); window.scrollTo({top:0,behavior:'smooth'}); }
+function unlock(n){ ST.max=Math.max(ST.max,n); }
+
+function s1(){
+  const rows=C.map((c,i)=>{
+    const G=GM[c.gid], p=pool(c), best=p[0];
+    const gates=[true, c.bal>=42&&c.bal<=58, false, best.score>0, true];
+    return `<div class="opt ${ST.cand===i?'sel':''}" onclick="pick(${i})">
+      <span class="rk">${i+1}</span>
+      <div class="main">
+        <div class="t1">${c.a.n} <span style="color:var(--dim)">vs</span> ${c.b.n}
+          <span class="dots">${gates.map(g=>`<i class="${g?'g':'r'}"></i>`).join('')}</span></div>
+        <div class="t2">${G.away} @ ${G.home} · ${G.et} · ${c.pos} ${c.mk} · WRINKLE: ${best.ttl.toUpperCase()}</div>
+        <div class="bal"><i class="l" style="width:${c.bal}%"></i><i class="r" style="width:${100-c.bal}%"></i></div>
+      </div>
+      <div class="sc"><b>${c.bal.toFixed(1)}</b><span>BALANCE</span></div>
+    </div>`;}).join('');
+  document.getElementById('s1').innerHTML=`
+  <div class="card"><div class="ch"><h2>Pick tomorrow's matchup</h2>
+    <span class="hint">2 GAMES · 20 CANDIDATES · 7 SHOWN · CLICK ONE</span></div>
+   <div class="cb">${rows}
+    <div class="msg bad"><u>THE THIRD DOT IS RED ON EVERY ROW</u>
+    That is the art gate. No football action sprite has shipped, so none of these can actually be staged tonight.
+    Everything else about them is real. Pick one anyway and the rest of the console will run for real, which is the point of this exercise.</div>
+    <div class="bar" style="margin-top:14px"><button class="btn" id="b1" disabled onclick="unlock(2);go(2)">CONFIRM AND CONTINUE</button>
+    <span class="note" style="margin:0">Gates: participants named · balance 42 to 58 · art shipped · a wrinkle exists · market settles</span></div>
+   </div></div><div class="nb"><u>BUILD NOTES · STAGE 1</u>
+<h4>WHERE THE LIST COMES FROM</h4>
+<p>Three calls, then everything else is arithmetic.</p>
+<p><code>GET /nfl/v1/games?seasons[]=2026</code> the slate. Filter to tomorrow in code, <b>not</b> with dates[], which returns nothing for preseason.</p>
+<p><code>GET /nfl/v1/dfs/draftables?slate_id=</code> the roster for each game, with a per player status and is_disabled flag. This is the only roster source, there is no NFL lineups endpoint.</p>
+<p><code>GET /nfl/v1/season_stats?season=2025&player_ids[]=</code> last season's numbers. <b>Cap this at 8 ids per call</b>, larger batches silently drop players.</p>
+<h4>HOW A CANDIDATE IS FORMED</h4>
+<p>For each game, each position, take the top 3 by the market metric on each side and cross them. Keep any pair whose balance lands between 42 and 58. Balance is simply <code>a / (a + b)</code> on the market metric.</p>
+<h4>THE FIVE GATES</h4>
+<ul><li>Both participants named. NFL is roster based. MLB reads is_probable_pitcher from the lineups endpoint.</li>
+<li>Balance inside 42 to 58.</li>
+<li><b>Art shipped in the live app version.</b> This is a lookup against a table you own, not against the API. See the README.</li>
+<li>A wrinkle scores above zero.</li>
+<li>The market settles cleanly.</li></ul>
+<h4>HARDCODED IN THIS PROTOTYPE</h4>
+<p>The seven candidates and their stats are frozen from a live pull on 19 August. In the real console this list is built at load.</p>
+<h4>YOU MUST BUILD</h4>
+<p>The candidate builder, the art gate lookup, and an honest empty state. On a normal MLB night at 20:00 ET this list will be one or two rows, not fifteen.</p></div>`;
+}
+function pick(i){ ST.cand=i; ST.wrinkle=null; s1(); s2(); document.getElementById('b1').disabled=false; }
+
+function s2(){
+  if(ST.cand===null){document.getElementById('s2').innerHTML='';return;}
+  const c=C[ST.cand], G=GM[c.gid], P=pool(c);
+  const rows=P.map((w,i)=>`
+   <div class="opt ${ST.wrinkle===i?'sel':''}" onclick="setW(${i})">
+     <span class="rk">${i+1}</span>
+     <div class="main"><div class="t1">${w.ttl}
+       ${w.fam.indexOf('none')===0?'<span class="pill" style="background:#1C232C;color:#5C6675">NO SCENE NEEDED</span>':(w.built?'<span class="pill ok">SCENE BUILT</span>':'<span class="pill no">NO SCENE</span>')}
+       ${w.asym>=.5?'<span class="pill w">ASYMMETRIC</span>':''}</div>
+       <div class="t2">${w.claim}</div></div>
+     <div class="sc"><b>${w.score}</b><span>SCORE</span></div>
+   </div>`).join('');
+  document.getElementById('s2').innerHTML=`
+  <div class="card"><div class="ch"><h2>Confirm the pieces, choose the wrinkle</h2>
+   <span class="hint">SCORE = EFFECT SIZE × ASYMMETRY</span></div>
+   <div class="cb">
+    <div class="g2" style="margin-bottom:14px">
+     <div class="box"><div class="bh">THE MATCHUP</div>
+      <div class="kv"><span>Game</span><b>${G.away} @ ${G.home}</b></div>
+      <div class="kv"><span>Venue</span><b>${G.ven}</b></div>
+      <div class="kv"><span>Locks</span><b>${G.et}</b></div>
+      <div class="kv"><span>Market</span><b>${c.pos} ${c.mk}</b></div>
+      <div class="kv"><span>Total, internal</span><b>${G.total}</b></div>
+     </div>
+     <div class="box"><div class="bh">THE TWO MEN</div>
+      <div class="kv"><span>${c.a.n} · ${c.a.tm}</span><b>${c.a.v}</b></div>
+      <div class="kv"><span>${c.b.n} · ${c.b.tm}</span><b>${c.b.v}</b></div>
+      <div class="kv"><span>Balance</span><b>${c.bal.toFixed(1)} / ${(100-c.bal).toFixed(1)}</b></div>
+      <div class="kv"><span>Backups</span><b>2 HELD</b></div>
+     </div></div>
+    ${rows}
+    <div class="bar" style="margin-top:14px"><button class="btn" id="b2" ${ST.wrinkle===null?'disabled':''}
+      onclick="unlock(3);go(3)">CONFIRM AND WRITE THE BEATS</button>
+     <button class="btn ghost" onclick="go(1)">BACK</button></div>
+   </div></div><div class="nb"><u>BUILD NOTES · STAGE 2</u>
+<h4>THE WRINKLE POOL</h4>
+<p>Each wrinkle is a template with a detector, an effect lookup and a sentence. Eleven of them for NFL. Adding a wrinkle means adding a template, never a special case in the console.</p>
+<h4>THE SCORE, WHICH IS THE ONLY OPINION IN THE SYSTEM</h4>
+<p><code>score = effect size x asymmetry</code></p>
+<p><b>Effect size</b> is the league wide gap as a percentage, read from the effects table. Never computed live.</p>
+<p><b>Asymmetry</b> is 0 to 1, how differently the condition lands on the two men. Opponent defence is <code>abs(rankA - rankB) / 31</code>. Home field is 1. Indoors is always 0.</p>
+<p>This is why opponent defence wins most nights. It is both the biggest effect we measured and the only one that is asymmetric by construction, because the two men always face different defences.</p>
+<h4>THE EFFECTS TABLE</h4>
+<p>A weekly offline job. For every template, position and metric, split the full season of player games, store both means, the sample and the t statistic, and <b>drop anything under two standard errors.</b> A few hundred rows. Nothing statistical runs while an operator waits.</p>
+<h4>HARDCODED IN THIS PROTOTYPE</h4>
+<p>Six effect rows, measured from 17,777 real player games of 2025. The real table has a few hundred and refreshes weekly.</p>
+<h4>YOU MUST BUILD</h4>
+<p>The eleven detectors, the weekly effects job, and the scene availability check that greys out a wrinkle whose family has no shipped renderer.</p></div>`;
+}
+function setW(i){ ST.wrinkle=i; s2(); s3(); s4(); s5(); s6(); }
+
+function s3(){
+  if(ST.wrinkle===null){document.getElementById('s3').innerHTML='';return;}
+  const c=C[ST.cand],G=GM[c.gid],w=pool(c)[ST.wrinkle];
+  const isQB=c.pos==='QB';
+  const b1=isQB?`${c.a.v} yards a game across ${c.a.s.gp} starts.`
+               :`${c.a.v} yards a game on ${c.a.s.tgt} targets.`;
+  const b1s=isQB?`${c.a.s.cmp}% COMPLETIONS · ${c.a.s.td} TD/INT · ${c.a.s.ypa} PER ATTEMPT`
+               :`${c.a.s.rec} CATCHES · ${c.a.s.ypr} PER CATCH · ${c.a.s.td} TD`;
+  const b2=isQB?`${c.b.v} yards a game across ${c.b.s.gp} starts.`
+               :`${c.b.v} yards a game on ${c.b.s.tgt} targets.`;
+  const b2s=isQB?`${c.b.s.cmp}% COMPLETIONS · ${c.b.s.td} TD/INT · ${c.b.s.ypa} PER ATTEMPT`
+               :`${c.b.s.rec} CATCHES · ${c.b.s.ypr} PER CATCH · ${c.b.s.td} TD`;
+  const beats=[
+   ['0 MATCHUP',`Who gains more ${c.mk.toLowerCase()} tonight?`,`${G.away} AT ${G.home} · ${G.ven} · ${G.et}`],
+   ['1 '+last(c.a.n).toUpperCase(),b1,b1s],
+   ['2 '+last(c.b.n).toUpperCase(),b2,b2s],
+   ['3 WRINKLE',w.claim,`${w.ev[0].toUpperCase()} ${w.ev[1]} · ${w.ev[2].toUpperCase()} ${w.ev[3]} · ${String(w.ev[4]).toUpperCase()}`],
+   ['4 THE PICK',`${last(c.a.n)} or ${last(c.b.n)}. More ${c.mk.toLowerCase()} wins the night.`,
+     `BALANCE ${c.bal.toFixed(1)} / ${(100-c.bal).toFixed(1)} · INSIDE THE WINDOW`]
+  ];
+  document.getElementById('s3').innerHTML=`
+   <div class="card"><div class="ch"><h2>The five beats</h2><span class="hint">GENERATED · CHARACTER COUNT LIVE</span></div>
+    <div class="cb">${beats.map(b=>`<div class="beat"><span class="bn">${b[0]}</span>
+      <span class="bt">${b[1]}<small>${b[2]}</small></span>
+      <span class="cc ${b[1].length>95?'over':''}">${b[1].length}/95</span></div>`).join('')}
+     <div class="msg gold"><u>WHAT YOU JUST CHANGED</u>
+      Choosing <b>${w.ttl.toLowerCase()}</b> rewrote beat 3 and set which numbers land in the File.
+      Go back to stage 2 and pick a different one to watch it move.</div>
+     <div class="bar" style="margin-top:13px"><button class="btn" onclick="unlock(4);go(4)">CONTINUE TO THE FILE</button>
+      <button class="btn ghost" onclick="go(2)">BACK</button></div>
+    </div></div><div class="nb"><u>BUILD NOTES · STAGE 3</u>
+<h4>EVERY BEAT IS A TEMPLATE</h4>
+<p>No free text. Each beat is a string with slots, and the slots are filled from the candidate and the chosen wrinkle. Changing the wrinkle in stage 2 rewrites beat 3 and reorders everything below it.</p>
+<h4>THE CASCADE</h4>
+<p>One ranked pool per card. The wrinkle takes the best drawable candidate. Beats 1 and 2 take the next two. The File takes the three below those. <b>Nothing is ever used twice.</b></p>
+<h4>THE HARD LIMIT</h4>
+<p>95 characters. Strings go straight to canvas at a fixed size, so a longer string clips rather than wraps. The counter here is live. In the real console this is a publish blocker, not a warning.</p>
+<p><b>No em dashes anywhere.</b> The glyph is not in the type stack and renders as an empty box.</p>
+<h4>YOU MUST BUILD</h4>
+<p>Field level locking. An operator who edits a beat and then changes the wrinkle should keep the edit. Locked fields survive regeneration.</p></div>`;
+}
+
+function s4(){
+  if(ST.wrinkle===null){document.getElementById('s4').innerHTML='';return;}
+  const c=C[ST.cand],isQB=c.pos==='QB';
+  const side=(p,lab)=>{
+    const r=isQB?[['Yards a game',p.v],['Completion %',p.s.cmp],['TD / INT',p.s.td],['Yards per attempt',p.s.ypa],['Attempts',p.s.att],['Games',p.s.gp]]
+                :[['Yards a game',p.v],['Catches',p.s.rec],['Targets',p.s.tgt],['Yards per catch',p.s.ypr],['Touchdowns',p.s.td],['Games',p.s.gp]];
+    return `<div class="box"><div class="bh">${lab}</div>${r.map(x=>`<div class="kv"><span>${x[0]}</span><b>${x[1]}</b></div>`).join('')}</div>`;};
+  document.getElementById('s4').innerHTML=`
+   <div class="card"><div class="ch"><h2>The File</h2><span class="hint">NOTHING REUSED FROM THE BEATS</span></div>
+    <div class="cb"><div class="g2">${side(c.a,c.a.n.toUpperCase()+' · '+c.a.tm)}${side(c.b,c.b.n.toUpperCase()+' · '+c.b.tm)}</div>
+     <div class="note"><b>Where these came from.</b> The wrinkle took the top candidate from the pool, beats 1 and 2 took the next two,
+     and the File took the three below those. A number used once is never used again.</div>
+     <div class="bar" style="margin-top:13px"><button class="btn" onclick="unlock(5);go(5)">CONTINUE TO THE LOOK</button>
+      <button class="btn ghost" onclick="go(3)">BACK</button></div></div></div><div class="nb"><u>BUILD NOTES · STAGE 4</u>
+<h4>WHERE THE FILE NUMBERS COME FROM</h4>
+<p>The same ranked pool as everything else, continuing down after the beats have taken theirs. The File never introduces a new source, it just takes the next three.</p>
+<h4>THE RULE THAT MATTERS</h4>
+<p>A number that appeared in a beat cannot appear in the File. If it does, the card reads as padded rather than deep.</p>
+<h4>ANTI COLLINEARITY</h4>
+<p>The three File numbers should come from three different dimension families. Three variations on volume is one fact printed three times.</p>
+<h4>YOU MUST BUILD</h4>
+<p>The full cascade with used tracking, and the family tagging that enforces the anti collinearity rule.</p></div>`;
+}
+
+function s5(){
+  if(ST.wrinkle===null){document.getElementById('s5').innerHTML='';return;}
+  const c=C[ST.cand],w=pool(c)[ST.wrinkle];
+  const need=[
+   ['Football world','Beats 0, 1, 2 and 4',true,'The only thing we own that this card needs'],
+   [c.pos==='QB'?'Throw animation':'Catch animation','Beats 1 and 2',false,'Nothing to scrub'],
+   ['Football cover sprite','Beat 0, beat 4, the File, the receipt',false,'No man on screen'],
+   [w.fam.split('·')[1].trim()+' scene','Beat 3',w.built,w.built?'Available':'The wrinkle cannot be drawn']];
+  const blocked=need.filter(x=>!x[2]).length;
+  document.getElementById('s5').innerHTML=`
+   <div class="card"><div class="ch"><h2>The look</h2><span class="hint">ART GATE · KEYED TO THE SHIPPED APP VERSION</span></div>
+    <div class="cb"><table><tr><th>Asset</th><th>Needed for</th><th>Status</th><th>If missing</th></tr>
+     ${need.map(x=>`<tr><td>${x[0]}</td><td>${x[1]}</td>
+      <td>${x[2]?'<span class="pill ok">BUILT</span>':'<span class="pill no">NOT BUILT</span>'}</td>
+      <td style="color:var(--mut)">${x[3]}</td></tr>`).join('')}</table>
+     <div class="msg ${blocked?'bad':'good'}"><u>${blocked?blocked+' PIECES MISSING':'CLEAR'}</u>
+      ${blocked?'This card cannot be staged. The console will not let you publish it, and the reason is a build dependency rather than an editorial one.':'Everything this card needs is in the live app version.'}</div>
+     <div class="bar" style="margin-top:13px"><button class="btn" onclick="unlock(6);go(6)">GO TO PUBLISH</button>
+      <button class="btn ghost" onclick="go(4)">BACK</button></div></div></div><div class="nb"><u>BUILD NOTES · STAGE 5</u>
+<h4>THIS IS THE ONE THAT WILL SURPRISE YOU</h4>
+<p>Art lives in the app binary. Text and numbers are served live, art is not, so every asset needs an App Store release. That makes the art gate a check against <b>the version currently on phones</b>, not against what exists in the design folder.</p>
+<h4>THREE ASSET STATES</h4>
+<ul><li><b>DRAFT</b> exists in the design folder</li>
+<li><b>APPROVED_FOR_BUILD</b> signed off, going into the next release</li>
+<li><b>SHIPPED_IN vN</b> actually on phones</li></ul>
+<p>Only SHIPPED counts for the gate. A card scheduled against an APPROVED asset renders as an empty frame on every device that has not updated.</p>
+<h4>WHY EVERY ROW IS RED TONIGHT</h4>
+<p>The football world and the weather scene are the only two pieces built. There is no action sprite, so beats 1 and 2 have nothing to scrub, and the weather scene cannot draw either of tomorrow's games because both are played under a roof.</p>
+<h4>YOU MUST BUILD</h4>
+<p>The asset registry with the three states, keyed to app version, and the gate that reads it.</p></div>`;
+}
+
+function s6(){
+  if(ST.wrinkle===null){document.getElementById('s6').innerHTML='';return;}
+  const c=C[ST.cand],G=GM[c.gid],w=pool(c)[ST.wrinkle];
+  document.getElementById('s6').innerHTML=`
+   <div class="card"><div class="ch"><h2>Publish</h2><span class="hint">FINAL CHECKS</span></div>
+    <div class="cb">
+     <div class="g2"><div class="box"><div class="bh">THE CARD YOU BUILT</div>
+       <div class="kv"><span>Matchup</span><b>${last(c.a.n)} v ${last(c.b.n)}</b></div>
+       <div class="kv"><span>Market</span><b>${c.pos} ${c.mk}</b></div>
+       <div class="kv"><span>Wrinkle</span><b>${w.ttl.toUpperCase()}</b></div>
+       <div class="kv"><span>Balance</span><b>${c.bal.toFixed(1)}</b></div>
+       <div class="kv"><span>Locks</span><b>${G.et}</b></div></div>
+      <div class="box"><div class="bh">PRE FLIGHT</div>
+       <div class="kv"><span>Both men still active</span><b style="color:var(--green)">PASS</b></div>
+       <div class="kv"><span>Every string under 95</span><b style="color:var(--green)">PASS</b></div>
+       <div class="kv"><span>No em dash anywhere</span><b style="color:var(--green)">PASS</b></div>
+       <div class="kv"><span>Art shipped</span><b style="color:var(--red)">FAIL</b></div>
+       <div class="kv"><span>Preseason guard</span><b style="color:var(--red)">FAIL</b></div></div></div>
+     <div class="msg bad"><u>BLOCKED, TWICE</u>
+      The art gate fails because no football action sprite has shipped. The preseason guard fails because the total is
+      ${G.total}, which is the books saying the starters are not playing a full game, so a season average will not describe tonight.
+      <br><br>Everything upstream of these two gates ran clean on live data.</div>
+     <div class="bar" style="margin-top:13px"><button class="btn" disabled>PUBLISH</button>
+      <button class="btn ghost" onclick="go(1)">START OVER</button></div></div></div><div class="nb"><u>BUILD NOTES · STAGE 6</u>
+<h4>PRE FLIGHT</h4>
+<p>Participants still active, every string under 95, no em dash, art shipped, and the sport specific guards.</p>
+<h4>THE PRESEASON GUARD</h4>
+<p>Not an art problem. The total here is 37.5, roughly half a normal game, which is the books saying the starters are not playing. A season average will not describe tonight. Recommend blocking player markets when a preseason total is under about 40.</p>
+<h4>THE THING THAT IS NOT BUILT ANYWHERE YET</h4>
+<p><b>A participant re-check between publish and lock, and a void path.</b> For MLB especially, a named starter can be scratched after we publish. Sportsbooks do not solve this by waiting, they solve it with a rule: a player prop on a pitcher who does not start is voided automatically.</p>
+<p>Our card is the same shape as a prop, so the same answer applies. Publish at 20:00, re-read the probables before lock, and if a named participant is gone the card voids. A void is not a loss: the streak is preserved and no receipt is issued.</p>
+<h4>YOU MUST BUILD</h4>
+<p>The re-check job, the void path, and the streak rule that goes with it. This is open decision 1 in the earlier pack and the books have already answered it.</p></div>`;
+}
+s1();track();
+</script></body></html>
