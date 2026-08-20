@@ -32,6 +32,42 @@ background:var(--pan);transition:.12s;display:flex;align-items:center;gap:14px}
 .opt .sc{text-align:right;flex:none}
 .opt .sc b{font-family:var(--mono);font-size:16px;color:#EDF1F6;display:block}
 .opt .sc span{font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:1px}
+/* ---------- FILTERS ----------
+   Three axes because three is what the candidate builder actually varies: which sport's
+   slate you are on, which market the card settles against, and which position the two
+   named participants play. Anything else is a property of the pair, not a way to narrow
+   a list. */
+.filt{display:flex;flex-wrap:wrap;gap:16px;padding:12px 17px;background:var(--pan2);
+  border-bottom:1px solid var(--bd)}
+.fg{display:flex;align-items:center;gap:7px}
+.fg>span{font-family:var(--mono);font-size:8.5px;letter-spacing:1.2px;color:var(--dim);
+  text-transform:uppercase}
+.fc{font-family:var(--mono);font-size:9px;letter-spacing:.9px;color:var(--mut);
+  background:transparent;border:1px solid var(--bd);border-radius:13px;padding:5px 10px;
+  cursor:pointer;text-transform:uppercase;transition:.14s}
+.fc:hover{border-color:#3A4655;color:var(--soft)}
+.fc.on{background:var(--acc);border-color:var(--acc);color:#0A0D11;font-weight:700}
+.fc.off{opacity:.4;cursor:not-allowed}
+.fc .ct{opacity:.62;margin-left:5px}
+/* ---------- RECOMMENDED ----------
+   A band, not a badge. The point of the console is that the operator makes two choices,
+   so the list has to answer "which one" before it answers "what else is there". */
+.band{display:flex;align-items:center;gap:9px;margin:2px 0 10px}
+.band u{text-decoration:none;font-family:var(--mono);font-size:8.5px;letter-spacing:1.5px;
+  font-weight:700;color:var(--gold)}
+.band i{flex:1;height:1px;background:linear-gradient(90deg,rgba(233,185,73,.4),transparent)}
+.band em{font-style:normal;font-family:var(--mono);font-size:8.5px;color:var(--dim);letter-spacing:.8px}
+.band.rest u{color:var(--dim)}
+.band.rest i{background:linear-gradient(90deg,var(--bd),transparent)}
+.opt.rec{border-color:rgba(233,185,73,.34);background:rgba(233,185,73,.035)}
+.opt.rec:hover{border-color:rgba(233,185,73,.6)}
+.opt.rec.sel{border-color:var(--gold);background:rgba(233,185,73,.1)}
+.why{display:inline-block;font-family:var(--mono);font-size:8px;letter-spacing:.9px;
+  color:var(--gold);background:rgba(233,185,73,.1);border:1px solid rgba(233,185,73,.28);
+  border-radius:10px;padding:2px 7px;margin-left:8px;text-transform:uppercase;vertical-align:1px}
+.empty{border:1px dashed var(--bd);border-radius:12px;padding:26px 18px;text-align:center}
+.empty b{display:block;font-size:13px;color:var(--soft);margin-bottom:6px}
+.empty span{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.6px;line-height:1.7}
 .bal{display:flex;height:6px;border-radius:3px;overflow:hidden;width:104px;margin-top:6px;background:#1A222C}
 .bal i{display:block;height:100%}
 .bal .l{background:var(--acc)}.bal .r{background:#3E5570}
@@ -113,25 +149,25 @@ const EFF={qb_opp:{soft:246.4,tough:189.9,n:347},wr_opp:{soft:53.9,tough:43.7,n:
 const GM={1393564:{away:'LV',home:'HOU',ven:'NRG Stadium',et:'8:00 PM ET',total:'37.5',dome:true},
           1393565:{away:'SF',home:'LAC',ven:'SoFi Stadium',et:'10:00 PM ET',total:'38.5',dome:true}};
 const C=[
-{gid:1393565,pos:'QB',mk:'PASSING YARDS',bal:50.8,
+{sport:'NFL',gid:1393565,pos:'QB',mk:'PASSING YARDS',bal:50.8,
  a:{n:'Brock Purdy',tm:'SF',v:240.8,or:4,oy:194.9,s:{cmp:69.4,td:'20/10',ypa:7.63,att:284,gp:9}},
  b:{n:'Justin Herbert',tm:'LAC',v:232.9,or:23,oy:241.8,s:{cmp:66.4,td:'26/13',ypa:7.28,att:512,gp:16}}},
-{gid:1393564,pos:'WR',mk:'RECEIVING YARDS',bal:50.9,
+{sport:'NFL',gid:1393564,pos:'WR',mk:'RECEIVING YARDS',bal:50.9,
  a:{n:'Jalen Nailor',tm:'LV',v:26.1,or:7,oy:205.1,s:{rec:29,tgt:53,ypr:15.3,td:4,gp:17}},
  b:{n:'Xavier Hutchinson',tm:'HOU',v:25.2,or:13,oy:214.4,s:{rec:35,tgt:57,ypr:12.2,td:3,gp:17}}},
-{gid:1393565,pos:'WR',mk:'RECEIVING YARDS',bal:48.3,
+{sport:'NFL',gid:1393565,pos:'WR',mk:'RECEIVING YARDS',bal:48.3,
  a:{n:'Mike Evans',tm:'SF',v:46.0,or:4,oy:194.9,s:{rec:30,tgt:61,ypr:12.3,td:3,gp:8}},
  b:{n:'Ladd McConkey',tm:'LAC',v:49.3,or:23,oy:241.8,s:{rec:66,tgt:106,ypr:12.0,td:6,gp:16}}},
-{gid:1393565,pos:'WR',mk:'RECEIVING YARDS',bal:48.0,
+{sport:'NFL',gid:1393565,pos:'WR',mk:'RECEIVING YARDS',bal:48.0,
  a:{n:'Deebo Samuel Sr.',tm:'SF',v:45.4,or:4,oy:194.9,s:{rec:72,tgt:99,ypr:10.1,td:5,gp:16}},
  b:{n:'Ladd McConkey',tm:'LAC',v:49.3,or:23,oy:241.8,s:{rec:66,tgt:106,ypr:12.0,td:6,gp:16}}},
-{gid:1393565,pos:'WR',mk:'RECEIVING YARDS',bal:52.8,
+{sport:'NFL',gid:1393565,pos:'WR',mk:'RECEIVING YARDS',bal:52.8,
  a:{n:'Ricky Pearsall',tm:'SF',v:58.7,or:4,oy:194.9,s:{rec:36,tgt:53,ypr:14.7,td:0,gp:9}},
  b:{n:'Quentin Johnston',tm:'LAC',v:52.5,or:23,oy:241.8,s:{rec:51,tgt:85,ypr:14.4,td:8,gp:14}}},
-{gid:1393564,pos:'QB',mk:'PASSING YARDS',bal:53.0,
+{sport:'NFL',gid:1393564,pos:'QB',mk:'PASSING YARDS',bal:53.0,
  a:{n:'Kirk Cousins',tm:'LV',v:172.1,or:7,oy:205.1,s:{cmp:61.7,td:'10/5',ypa:6.40,att:269,gp:10}},
  b:{n:'Davis Mills',tm:'HOU',v:152.5,or:13,oy:214.4,s:{cmp:57.2,td:'5/1',ypa:5.75,att:159,gp:6}}},
-{gid:1393565,pos:'WR',mk:'RECEIVING YARDS',bal:46.7,
+{sport:'NFL',gid:1393565,pos:'WR',mk:'RECEIVING YARDS',bal:46.7,
  a:{n:'Mike Evans',tm:'SF',v:46.0,or:4,oy:194.9,s:{rec:30,tgt:61,ypr:12.3,td:3,gp:8}},
  b:{n:'Quentin Johnston',tm:'LAC',v:52.5,or:23,oy:241.8,s:{rec:51,tgt:85,ypr:14.4,td:8,gp:14}}},
 ];
@@ -187,27 +223,101 @@ function track(){
 function go(n){ if(n>ST.max) return; ST.stage=n; document.querySelectorAll('.stage').forEach((e,i)=>e.classList.toggle('on',i===n-1)); track(); window.scrollTo({top:0,behavior:'smooth'}); }
 function unlock(n){ ST.max=Math.max(ST.max,n); }
 
+/* ---------- WHICH ONE ----------
+   The console's whole claim is that the operator makes two choices, so the list has to
+   answer "which one" before it answers "what else is there". Fit is the two gates that
+   are actually scored, multiplied: how strong the best wrinkle is, and how close the
+   balance sits to even. A lopsided pair with a monster wrinkle is not a good card, and
+   neither is a perfectly even pair with nothing to say about it.
+
+   The art gate is deliberately left out. It fails on every row tonight, so folding it in
+   would rank everything at zero and tell the operator nothing. */
+function fit(c){
+  const best=pool(c)[0];
+  const prox=Math.max(0,1-Math.abs(c.bal-50)/8);       // 42..58 is the gate, so /8
+  return {score:+(best.score*prox).toFixed(1),best,prox};
+}
+/* The reason has to be EARNED against the rest of the list, not read off a threshold.
+   Two rows both saying "best balance of the two" is worse than one saying nothing: it
+   tells the operator the label is decoration. So each superlative is handed out once. */
+function why(o,shown){
+  const others=shown.filter(x=>x!==o);
+  const maxW=Math.max(...shown.map(x=>x.f.best.score));
+  const maxP=Math.max(...shown.map(x=>x.f.prox));
+  if(o.f.best.score===maxW && others.every(x=>x.f.best.score<maxW)) return 'strongest wrinkle';
+  if(o.f.prox===maxP && others.every(x=>x.f.prox<maxP))             return 'closest to even';
+  if(o.f.best.built && others.every(x=>!x.f.best.built))            return 'scene already built';
+  return o===shown[0] ? 'best fit tonight' : '';
+}
+const FILT={sport:'NFL',mk:'ALL',pos:'ALL'};
+function setF(k,v){ FILT[k]=v; ST.cand=null; ST.wrinkle=null;
+  document.getElementById('b1').disabled=true; s1(); s2(); }
+function passes(c){
+  return (FILT.sport==='ALL'||c.sport===FILT.sport)
+      && (FILT.mk==='ALL'||c.mk===FILT.mk)
+      && (FILT.pos==='ALL'||c.pos===FILT.pos);
+}
+/* Counts are computed against the OTHER two axes, not against the full list, so a chip
+   showing 3 means three rows if you press it - which is the only number worth printing. */
+function countFor(k,v){
+  const t={...FILT}; t[k]=v;
+  return C.filter(c=>(t.sport==='ALL'||c.sport===t.sport)
+                   &&(t.mk==='ALL'||c.mk===t.mk)
+                   &&(t.pos==='ALL'||c.pos===t.pos)).length;
+}
+function chips(k,opts){
+  return opts.map(o=>{
+    const n=countFor(k,o.v), dead=n===0&&o.v!=='ALL';
+    return `<button class="fc ${FILT[k]===o.v?'on':''} ${dead?'off':''}"
+      ${dead?'disabled':`onclick="setF('${k}','${o.v}')"`}>${o.l}<span class="ct">${n}</span></button>`;
+  }).join('');
+}
+
 function s1(){
-  const rows=C.map((c,i)=>{
-    const G=GM[c.gid], p=pool(c), best=p[0];
+  /* Ranked by fit, then split. Indices are kept against the ORIGINAL array so pick(i)
+     still addresses the right candidate no matter how the list is filtered or sorted. */
+  const shown=C.map((c,i)=>({c,i,f:fit(c)})).filter(o=>passes(o.c))
+               .sort((x,y)=>y.f.score-x.f.score);
+  const REC=Math.min(3,Math.max(1,Math.ceil(shown.length/3)));
+  shown.forEach(o=>o.rsn=why(o,shown));
+  const row=(o,n,rec)=>{
+    const c=o.c, G=GM[c.gid], best=o.f.best;
     const gates=[true, c.bal>=42&&c.bal<=58, false, best.score>0, true];
-    return `<div class="opt ${ST.cand===i?'sel':''}" onclick="pick(${i})">
-      <span class="rk">${i+1}</span>
+    return `<div class="opt ${rec?'rec':''} ${ST.cand===o.i?'sel':''}" onclick="pick(${o.i})">
+      <span class="rk">${n}</span>
       <div class="main">
         <div class="t1">${c.a.n} <span style="color:var(--dim)">vs</span> ${c.b.n}
-          <span class="dots">${gates.map(g=>`<i class="${g?'g':'r'}"></i>`).join('')}</span></div>
-        <div class="t2">${G.away} @ ${G.home} · ${G.et} · ${c.pos} ${c.mk} · WRINKLE: ${best.ttl.toUpperCase()}</div>
+          <span class="dots">${gates.map(g=>`<i class="${g?'g':'r'}"></i>`).join('')}</span>
+          ${rec&&o.rsn?`<span class="why">${o.rsn}</span>`:''}</div>
+        <div class="t2">${c.sport} · ${G.away} @ ${G.home} · ${G.et} · ${c.pos} ${c.mk} · WRINKLE: ${best.ttl.toUpperCase()}</div>
         <div class="bal"><i class="l" style="width:${c.bal}%"></i><i class="r" style="width:${100-c.bal}%"></i></div>
       </div>
       <div class="sc"><b>${c.bal.toFixed(1)}</b><span>BALANCE</span></div>
-    </div>`;}).join('');
+    </div>`;};
+  const rows = shown.length===0
+    ? `<div class="empty"><b>Nothing on this slate matches</b>
+         <span>That is a real state, not a bug. On a normal MLB night at 20:00 ET<br>
+         this list is one or two rows, and some filters return none.</span></div>`
+    : `<div class="band"><u>RECOMMENDED</u><i></i><em>WRINKLE STRENGTH &times; BALANCE</em></div>`
+      + shown.slice(0,REC).map((o,k)=>row(o,k+1,true)).join('')
+      + (shown.length>REC
+          ? `<div class="band rest" style="margin-top:16px"><u>EVERYTHING ELSE</u><i></i>
+             <em>${shown.length-REC} MORE</em></div>`
+            + shown.slice(REC).map((o,k)=>row(o,REC+k+1,false)).join('')
+          : '');
+  const filters=`<div class="filt">
+    <div class="fg"><span>Sport</span>${chips('sport',[{l:'NFL',v:'NFL'},{l:'MLB',v:'MLB'},{l:'All',v:'ALL'}])}</div>
+    <div class="fg"><span>Prop</span>${chips('mk',[{l:'Passing yds',v:'PASSING YARDS'},{l:'Receiving yds',v:'RECEIVING YARDS'},{l:'All',v:'ALL'}])}</div>
+    <div class="fg"><span>Position</span>${chips('pos',[{l:'QB',v:'QB'},{l:'WR',v:'WR'},{l:'All',v:'ALL'}])}</div>
+  </div>`;
   document.getElementById('s1').innerHTML=`
   <div class="card"><div class="ch"><h2>Pick tomorrow's matchup</h2>
-    <span class="hint">2 GAMES · 20 CANDIDATES · 7 SHOWN · CLICK ONE</span></div>
+    <span class="hint">2 GAMES · 20 CANDIDATES · ${shown.length} SHOWN · CLICK ONE</span></div>
+   ${filters}
    <div class="cb">${rows}
-    <div class="msg bad"><u>THE THIRD DOT IS RED ON EVERY ROW</u>
+    ${shown.length?`<div class="msg bad"><u>THE THIRD DOT IS RED ON EVERY ROW</u>
     That is the art gate. No football action sprite has shipped, so none of these can actually be staged tonight.
-    Everything else about them is real. Pick one anyway and the rest of the console will run for real, which is the point of this exercise.</div>
+    Everything else about them is real. Pick one anyway and the rest of the console will run for real, which is the point of this exercise.</div>`:''}
     <div class="bar" style="margin-top:14px"><button class="btn" id="b1" disabled onclick="unlock(2);go(2)">CONFIRM AND CONTINUE</button>
     <span class="note" style="margin:0">Gates: participants named · balance 42 to 58 · art shipped · a wrinkle exists · market settles</span></div>
    </div></div><div class="nb"><u>BUILD NOTES · STAGE 1</u>
@@ -224,6 +334,10 @@ function s1(){
 <li><b>Art shipped in the live app version.</b> This is a lookup against a table you own, not against the API. See the README.</li>
 <li>A wrinkle scores above zero.</li>
 <li>The market settles cleanly.</li></ul>
+<h4>RECOMMENDED, AND THE FILTERS</h4>
+<p><code>fit = wrinkle score x balance proximity</code>. The top third of whatever is showing, capped at three, sits above the fold. The art gate is left out of fit on purpose: it fails on every row tonight, so including it would rank everything at zero and say nothing.</p>
+<p>Chip counts are computed against the other two axes, so a chip reading 3 means three rows if you press it. A chip that would return nothing is disabled rather than hidden, because an operator needs to know the axis exists.</p>
+<p><b>MLB returns zero here</b> and that is honest: this pull was an NFL preseason night. The empty state is the one you have to build anyway.</p>
 <h4>HARDCODED IN THIS PROTOTYPE</h4>
 <p>The seven candidates and their stats are frozen from a live pull on 19 August. In the real console this list is built at load.</p>
 <h4>YOU MUST BUILD</h4>
@@ -275,6 +389,10 @@ function s2(){
 <p>This is why opponent defence wins most nights. It is both the biggest effect we measured and the only one that is asymmetric by construction, because the two men always face different defences.</p>
 <h4>THE EFFECTS TABLE</h4>
 <p>A weekly offline job. For every template, position and metric, split the full season of player games, store both means, the sample and the t statistic, and <b>drop anything under two standard errors.</b> A few hundred rows. Nothing statistical runs while an operator waits.</p>
+<h4>RECOMMENDED, AND THE FILTERS</h4>
+<p><code>fit = wrinkle score x balance proximity</code>. The top third of whatever is showing, capped at three, sits above the fold. The art gate is left out of fit on purpose: it fails on every row tonight, so including it would rank everything at zero and say nothing.</p>
+<p>Chip counts are computed against the other two axes, so a chip reading 3 means three rows if you press it. A chip that would return nothing is disabled rather than hidden, because an operator needs to know the axis exists.</p>
+<p><b>MLB returns zero here</b> and that is honest: this pull was an NFL preseason night. The empty state is the one you have to build anyway.</p>
 <h4>HARDCODED IN THIS PROTOTYPE</h4>
 <p>Six effect rows, measured from 17,777 real player games of 2025. The real table has a few hundred and refreshes weekly.</p>
 <h4>YOU MUST BUILD</h4>
